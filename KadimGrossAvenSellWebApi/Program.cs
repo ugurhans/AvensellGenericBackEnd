@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Formatting.Json;
 using Entity.Dtos;
+using Entity.Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AvenSellApi", Version = "v1" });
 });
 
-builder.Services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.File(new JsonFormatter(), "log.json", shared: true)
