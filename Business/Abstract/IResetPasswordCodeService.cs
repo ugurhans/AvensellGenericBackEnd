@@ -8,6 +8,5 @@ namespace Business.Abstract
 {
     public interface IResetPasswordCodeService
     {
-        void CreateResetPasswordCode(int userId);
     }
 }

@@ -23,6 +23,7 @@ namespace WebAPI.Controllers
             _userService = userService;
         }
 
+
         [HttpPost("login")]
         public ActionResult Login(UserForLoginDto userForLoginDto)
         {
@@ -40,6 +41,17 @@ namespace WebAPI.Controllers
             }
 
             return BadRequest(result);
+        }
+
+        [HttpPost("SendPasswordResetMail")]
+        public async Task<ActionResult> SendPasswordResetMail(string userMail)
+        {
+            var mailInfo = await _authService.SendPasswordResetMailAsync(userMail);
+            if (!mailInfo.Success)
+            {
+                return BadRequest(mailInfo);
+            }
+            return Ok(mailInfo);
         }
 
         //[HttpPost("Delete")]
@@ -128,7 +140,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-             
+
             return BadRequest(result);
         }
 
@@ -168,24 +180,6 @@ namespace WebAPI.Controllers
             }
 
             return BadRequest(result);
-        }
-
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordSendLinkDto userEmail)
-        {
-            var result = await _authService.ForgotPasswordSendLink(userEmail);
-            if (userEmail == null)
-                return BadRequest();
-
-            return Ok(result);
-        }
-
-        
-        [HttpPost("Forgot-Password-Verify")]
-        public ActionResult ForgotPasswordVerify(ForgotPasswordChangesDto passwordChanges)
-        {
-            var result = _authService.ForgotPasswordVerifyToken(passwordChanges);
-            return result.Success ? Ok(result) : BadRequest(result);
         }
     }
 }

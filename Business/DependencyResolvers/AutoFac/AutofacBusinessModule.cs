@@ -112,6 +112,9 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfOrderContactInfoDal>().As<IOrderContactInfoDal>().SingleInstance();
 
 
+            builder.RegisterType<ResetPasswordCodeManager>().As<IResetPasswordCodeService>().SingleInstance();
+            builder.RegisterType<EfResetPasswordCodeDal>().As<IResetPasswordCodeDal>().SingleInstance();
+
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();

@@ -42,5 +42,5 @@ namespace Business.Concrate
             }
         }
     }
-    
+
 }

@@ -12,9 +12,7 @@ namespace Business.Abstract
         IDataResult<UserDto> Login(UserForLoginDto userForLoginDto);
         IResult UserExists(string email);
         IDataResult<UserDto> CreateAccessToken(UserDto user);
-        Task<IDataResult<string>> ForgotPasswordSendLink(ForgotPasswordSendLinkDto email);
-        IDataResult<bool> ForgotPasswordVerifyToken(ForgotPasswordChangesDto email);
-        
+        Task<IResult> SendPasswordResetMailAsync(string userMail);
     }
 }
 
