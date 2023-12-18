@@ -13,6 +13,7 @@ namespace Business.Abstract
         IResult UserExists(string email);
         IDataResult<UserDto> CreateAccessToken(UserDto user);
         Task<IResult> SendPasswordResetMailAsync(string userMail);
+        IResult ChangePassword(string userMail, string code, string newPassword);
     }
 }
 

@@ -116,11 +116,32 @@ namespace Business.Concrete
             var result = await _mailService.SendLostEmailAsync(new Entity.Request.MailRequest() { Body = "Deneme", Subject = "Deneme", ToEmail = "ugurhanatilgan@gmail.com" });
             if (result.Success)
             {
-                _resetpasswordCodeDal.Add(new ResetPasswordCode()
-                { Code = code, ExpirationDate = new DateTime().AddDays(10), UserId = 7 });
-                return new SuccessResult();
+
+                return new SuccessResult(result.Message);
             }
-            return new ErrorResult();
+            return new ErrorResult(result.Message);
+        }
+
+        public IResult ChangePassword(string userMail, string code, string newPassword)
+        {
+            var user = _userService.GetByMail(userMail);
+            if (user != null && user.LostPin != null && user.LostPin.Length > 0)
+            {
+                var pin = user.LostPin;
+                if (pin == code)
+                {
+                    byte[] passwordHash, passwordSalt;
+                    HashingHelper.CreatePasswordHash(newPassword, out passwordHash, out passwordSalt);
+                    user.PasswordHash = passwordHash;
+                    user.PasswordSalt = passwordSalt;
+                    user.LostPin = null;
+                    _userService.Update(user);
+                    return new SuccessResult("User Password Changed");
+                }
+                return new ErrorResult("Code is not correct");
+            }
+            return new ErrorResult("User Or Code not found");
+
         }
     }
 }

@@ -54,6 +54,20 @@ namespace WebAPI.Controllers
             return Ok(mailInfo);
         }
 
+
+        [HttpPost("ChangePassword")]
+        public ActionResult ChangePassword(string userMail, string code, string newPassword)
+        {
+            var mailInfo = _authService.ChangePassword(userMail, code, newPassword);
+            if (!mailInfo.Success)
+            {
+                return BadRequest(mailInfo);
+            }
+            return Ok(mailInfo);
+        }
+
+
+
         //[HttpPost("Delete")]
         //public ActionResult Delete(int userId)
         //{
