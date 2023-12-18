@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Concrate\" />
+    <None Remove="Dto\" />
+    <None Remove="Request\" />
+    <None Remove="Result\" />
+    <None Remove="Enum\" />
+    <None Remove="Abtract\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Request\" />
+    <Folder Include="Result\" />
+    <Folder Include="Enum\" />
+    <Folder Include="Abtract\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+</Project>

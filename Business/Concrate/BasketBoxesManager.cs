@@ -1,0 +1,88 @@
+﻿using System;
+using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
+using DataAccess.Abstract;
+using DataAccess.Concrate.EntityFramework;
+using Entity.Concrete;
+using Entity.Dto;
+
+namespace Business.Concrate
+{
+    public class BasketBoxesManager : IBasketBoxesService
+    {
+        private readonly IDeliveryDal _deliveryDal;
+        private readonly IEmptyDeliveryDal _emptyDeliveryDal;
+        private readonly IOnlinePaymentDal _onlinePaymentDal;
+        private readonly IPaymentTypeDal _paymentTypeDal;
+        private readonly IMarketVariablesDal _marketVariablesDal;
+        private readonly IBasketDal _basketDal;
+        private readonly IAddressDal _addressDal;
+
+        public BasketBoxesManager(IDeliveryDal deliveryDal, IEmptyDeliveryDal emptyDeliveryDal, IOnlinePaymentDal onlinePaymentDal, IPaymentTypeDal paymentTypeDal, IMarketVariablesDal marketVariablesDal, IBasketDal basketDal,IAddressDal addressDal)
+        {
+            _deliveryDal = deliveryDal;
+            _emptyDeliveryDal = emptyDeliveryDal;
+            _onlinePaymentDal = onlinePaymentDal;
+            _paymentTypeDal = paymentTypeDal;
+            _marketVariablesDal = marketVariablesDal;
+            _basketDal = basketDal;
+            _addressDal = addressDal;
+
+
+        }
+        //ttizden
+        public decimal GetBasketPrice(int userId)
+        {
+            var basket = _basketDal.GetSimpleByUserId(userId);
+
+            if (basket == null)
+            {
+                var newBasket = new Basket() 
+                {
+                    UserId = userId,
+                };
+                _basketDal.Add(newBasket);
+                return 0;
+            }
+            decimal totalBasketPrice = basket.TotalBasketPrice ?? 0;
+            return totalBasketPrice;
+        }
+
+        public IDataResult<BasketCheckBoxTypeDto>? GetBoxes()
+        {
+            var delivery = _deliveryDal.GetAll();
+            var emptyDelivery = _emptyDeliveryDal.GetAll()?.FirstOrDefault();
+            var onlinePayment = _onlinePaymentDal.GetAll()?.FirstOrDefault();
+            var paymentType = _paymentTypeDal.GetAll();
+            var marketVariable = _marketVariablesDal.GetAll()?.FirstOrDefault();
+            var dto = new BasketCheckBoxTypeDto()
+            {
+                Delivery = delivery,
+                EmptyDelivery = emptyDelivery,
+                OnlinePayment = onlinePayment,
+                Payment = paymentType,
+                MarketVariables = marketVariable
+            };
+            return new SuccessDataResult<BasketCheckBoxTypeDto>(dto);
+        }
+
+        public IResult UpdateBoxes(BasketCheckBoxTypeDto basketCheckBoxes)
+        {
+            _onlinePaymentDal.Update(basketCheckBoxes.OnlinePayment);
+            _emptyDeliveryDal.Update(basketCheckBoxes.EmptyDelivery);
+            _marketVariablesDal.Update(basketCheckBoxes.MarketVariables);
+            foreach (var item in basketCheckBoxes.Payment)
+            {
+                _paymentTypeDal.Update(item);
+            }
+            foreach (var item in basketCheckBoxes.Delivery)
+            {
+                _deliveryDal.Update(item);
+            }
+            return new SuccessResult(Messages.Updated);
+        }
+
+    }
+}
+

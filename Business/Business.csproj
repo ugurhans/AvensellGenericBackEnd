@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DependencyResolvers\" />
+    <None Remove="DependencyResolvers\AutoFac\" />
+    <None Remove="Concrate\" />
+    <None Remove="Abstract\" />
+    <None Remove="Constants\" />
+    <None Remove="Abstract\IOrderService.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DependencyResolvers\" />
+    <Folder Include="DependencyResolvers\AutoFac\" />
+    <Folder Include="Constants\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="7.0.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.1" />
+    <PackageReference Include="Castle.Core" Version="5.1.1" />
+    <PackageReference Include="MailKit" Version="4.0.0" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+  </ItemGroup>
+</Project>
