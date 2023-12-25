@@ -43,6 +43,25 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("adminlogin")]
+        public ActionResult LoginAdmin(AdminForLoginDto adminForLoginDto)
+        {
+            var AdminToLogin = _authService.LoginAdmin(adminForLoginDto);
+            if (!AdminToLogin.Success)
+            {
+                return BadRequest(AdminToLogin.Message);
+            }
+
+            var result = _authService.CreateAccessTokenAdmin(AdminToLogin.Data);
+            if (result.Success)
+            {
+                result.Data.BasketId = AdminToLogin.Data.BasketId;
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
         [HttpPost("SendPasswordResetMail")]
         public async Task<ActionResult> SendPasswordResetMail(string userMail)
         {
@@ -108,7 +127,32 @@ namespace WebAPI.Controllers
             return BadRequest(tokenResult);
         }
 
+        [HttpPost("adminregister")]
+        public ActionResult adminRegister(AdminForRegisterDto adminForRegisterDto)
+        {
+            var userExists = _authService.UserExists(adminForRegisterDto.Email);
+            if (!userExists.Success)
+            {
+                return BadRequest(userExists);
+            }
 
+            var registerResult = _authService.RegisterAdmin(adminForRegisterDto, adminForRegisterDto.Password);
+            var basket = new Basket()
+            {
+                UserId = registerResult.Data.Id,
+                CreatedDate = DateTime.Now,
+            };
+            var basketResult = _basketService.Add(basket);
+            var tokenResult = _authService.CreateAccessTokenAdmin(registerResult.Data);
+
+            if (registerResult.Success && tokenResult.Success && basketResult.Success)
+            {
+                tokenResult.Data.BasketId = basket.Id;
+                return Ok(tokenResult);
+            }
+
+            return BadRequest(tokenResult);
+        }
 
         //[HttpPost("resetpassword")]
         //public ActionResult ForgotPassword(ResertPasswordDto resertPasswordDto)
