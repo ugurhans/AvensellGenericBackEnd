@@ -15,6 +15,7 @@ namespace DataAccess.Abstract
     {
         AdminDto GetDto(string email);
         List<OperationClaim> GetClaims(AdminDto adminDto);
+        List<AdminProfileDtoIDto> GetAllAdmin();
 
     }
 }

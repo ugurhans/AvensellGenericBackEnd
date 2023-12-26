@@ -10,13 +10,11 @@ namespace DataAccess.Abstract
 {
     public interface IUserDal : IEntityRepository<User>
     {
-        List<UserProfileDto> GetAllAdmin();
+       
         List<CarrierDto> GetAllCarriers();
         List<UserProfileDto> GetAllUserProfile();
         List<OperationClaim> GetClaims(UserDto user);
-       // List<OperationClaim> GetClaims(User user);//
         UserDto GetDto(string email);
-        //User GetUserById(int id);
         UserProfileDto GetProfileDto(int userId);
     }
 }

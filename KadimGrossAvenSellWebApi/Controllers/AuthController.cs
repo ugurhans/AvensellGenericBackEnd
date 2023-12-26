@@ -15,12 +15,14 @@ namespace WebAPI.Controllers
         private IAuthService _authService;
         private IBasketService _basketService;
         private IUserService _userService;
+        private IAdminService _adminService;
 
-        public AuthController(IAuthService authService, IBasketService basketService, IUserService userService)
+        public AuthController(IAuthService authService, IBasketService basketService, IUserService userService, IAdminService adminService)
         {
             _authService = authService;
             _basketService = basketService;
             _userService = userService;
+            _adminService = adminService;
         }
 
 
@@ -231,7 +233,7 @@ namespace WebAPI.Controllers
         [HttpGet("GetAllAdmins")]
         public ActionResult GetAllAdmins()
         {
-            var result = _userService.GetAllAdmins();
+            var result = _adminService.GetAllAdmins();
             if (result.Success)
             {
                 return Ok(result);

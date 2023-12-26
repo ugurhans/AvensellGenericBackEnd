@@ -74,10 +74,6 @@ namespace Business.Concrete
             return new SuccessDataResult<int>(_userDal.GetAll().Count);
         }
 
-        public IDataResult<List<UserProfileDto>>? GetAllAdmins()
-        {
-            return new SuccessDataResult<List<UserProfileDto>>(_userDal.GetAllAdmin());
-        }
 
         public IDataResult<List<UserProfileDto>> GetAllUserProfile()
         {

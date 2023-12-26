@@ -13,23 +13,11 @@ namespace Business.Abstract
 {
     public interface IAdminService
     {
-        AdminDto GetByMailDtoAdmin(string email);//
+        AdminDto GetByMailDtoAdmin(string email);
         List<OperationClaim> GetClaims(AdminDto admin);
-        //List<OperationClaim> GetClaims(User user);//
+        IDataResult<List<AdminProfileDtoIDto>>? GetAllAdmins();
         void Add(Admin admin);
-        //IResult Update(User user);
-        //IResult UpdateDto(UpdateUserDto user);
-        //IResult UpdateMail(User user);
-        //UserDto GetByMailDto(string email);
-        //User GetByMail(string email);
-        ////UserDto GetByMailPassword(string email);//
-        //IResult Delete(int userId);
-        //IDataResult<UserProfileDto>? GetUserProfile(int userId);
-        //IDataResult<List<UserProfileDto>>? GetAllAdmins();
-        //IDataResult<List<CarrierDto>> GetAllCarriers();
-        //IDataResult<int> GetAllCount();
-        //IDataResult<List<UserProfileDto>> GetAllUserProfile();
-        //IDataResult<UserProfileDto> GetById(int id);//
+ 
 
      
     }

@@ -3,6 +3,7 @@ using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
+using Entity.Dto;
 using Entity.DTOs;
 using System;
 using System.Collections.Generic;
@@ -65,5 +66,32 @@ namespace DataAccess.Concrate.EntityFramework
                 return result.FirstOrDefault();
             }
         }
+
+        public List<AdminProfileDtoIDto> GetAllAdmin()
+        {
+            using (AvenSellContext context = new AvenSellContext())
+            {
+                var result = from u in context.Admins
+                             select new AdminProfileDtoIDto()
+                             {
+                                 Email = u.Email,
+                                 FirstName = u.FirstName,
+                                 LastName = u.LastName,
+                                 Id = u.Id,
+                                 CreateDate = u.CreateDate,
+                                 DateofBirth = u.DateofBirth,
+                                 Gender = u.Gender,
+                                 LastLogin = u.LastLogin,
+                                 LastWrongLogin = u.LastWrongLogin,
+                                 ModifiedDate = u.ModifiedDate,
+                                 PhoneNumber = u.PhoneNumber,
+                                 SocialMediaProfiles = u.SocialMediaProfiles,
+                                 Status = u.Status
+                             };
+                return result.ToList();
+            }
+        }
+
+      
     }
 }

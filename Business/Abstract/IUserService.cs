@@ -19,7 +19,6 @@ namespace Business.Abstract
         //UserDto GetByMailPassword(string email);//
         IResult Delete(int userId);
         IDataResult<UserProfileDto>? GetUserProfile(int userId);
-        IDataResult<List<UserProfileDto>>? GetAllAdmins();
         IDataResult<List<CarrierDto>> GetAllCarriers();
         IDataResult<int> GetAllCount();
         IDataResult<List<UserProfileDto>> GetAllUserProfile();
