@@ -158,7 +158,7 @@ namespace Business.Concrete
         {
             var code = GenerateRandomCode();
 
-            var result = await _mailService.SendLostEmailAsync(new Entity.Request.MailRequest() { Body = "Deneme", Subject = "Deneme", ToEmail = "ugurhanatilgan@gmail.com" });
+            var result = await _mailService.SendLostEmailAsync(new Entity.Request.MailRequest() { Body = "Deneme", Subject = "Deneme", ToEmail = userMail });
             if (result.Success)
             {
 
