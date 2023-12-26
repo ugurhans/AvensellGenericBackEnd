@@ -10,6 +10,7 @@ using Entity.Dto;
 using Entity.Concrate;
 using MimeKit;
 using System.Net.Mail;
+using Core.Entities.Dtos;
 
 namespace Business.Concrete
 {
@@ -21,16 +22,18 @@ namespace Business.Concrete
         private IUserOperationClaimsDal _userOperationClaimsDal;
         private readonly IResetPasswordCodeDal _resetpasswordCodeDal;
         private readonly IMailService _mailService;
+        private IAdminService _adminService;
 
 
 
-        public AuthManager(IUserOperationClaimsDal userOperationClaimsDal, ITokenHelper tokenHelper, IUserService userService, IResetPasswordCodeDal resetpasswordCodeDal, IMailService mailService)
+        public AuthManager(IUserOperationClaimsDal userOperationClaimsDal, ITokenHelper tokenHelper, IUserService userService, IResetPasswordCodeDal resetpasswordCodeDal, IMailService mailService, IAdminService adminService)
         {
             _userOperationClaimsDal = userOperationClaimsDal;
             _tokenHelper = tokenHelper;
             _userService = userService;
             _resetpasswordCodeDal = resetpasswordCodeDal;
             _mailService = mailService;
+            _adminService = adminService;
         }
 
         public IDataResult<UserDto> CreateAccessToken(UserDto user)
@@ -39,6 +42,13 @@ namespace Business.Concrete
             var accessToken = _tokenHelper.CreateToken(user, claims);
             user.Token = accessToken;
             return new SuccessDataResult<UserDto>(user, Messages.AccessTokenCreated);
+        }
+        public IDataResult<AdminDto> CreateAccessTokenAdmin(AdminDto admin)
+        {
+            var claims = _adminService.GetClaims(admin);
+            var accessToken = _tokenHelper.CreateToken(admin, claims);
+            admin.Token = accessToken;
+            return new SuccessDataResult<AdminDto>(admin, Messages.AccessTokenCreated);
         }
 
         public IResult Delete(int userId)
@@ -63,6 +73,19 @@ namespace Business.Concrete
             return new SuccessDataResult<UserDto>(userToCheck, "Giriş Başarıyla Sağlandı.");
         }
 
+        public IDataResult<AdminDto> LoginAdmin(AdminForLoginDto adminForLoginDto)
+        {
+            var userToCheck = _adminService.GetByMailDtoAdmin(adminForLoginDto.Email);
+            if (userToCheck == null)
+            {
+                return new ErrorDataResult<AdminDto>("E-posta'ya ait bir kayıt bulunamadı.");
+            }
+            if (!HashingHelper.VerifyPasswordHash(adminForLoginDto.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
+            {
+                return new ErrorDataResult<AdminDto>(Messages.Error);
+            }
+            return new SuccessDataResult<AdminDto>(userToCheck, "Giriş Başarıyla Sağlandı.");
+        }
 
         public IDataResult<UserDto> Register(UserForRegisterDto userForRegisterDto, string password)
         {
@@ -91,6 +114,28 @@ namespace Business.Concrete
             return new SuccessDataResult<UserDto>(dto, "Başarıyla Kayıt Olundu.");
         }
 
+        public IDataResult<AdminDto> RegisterAdmin(AdminForRegisterDto adminForRegisterDto, string password)
+        {
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            var admin = new Admin
+            {
+                Email = adminForRegisterDto.Email,
+                FirstName = adminForRegisterDto.FirstName,
+                LastName = adminForRegisterDto.LastName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Status = true,
+                PhoneNumber = adminForRegisterDto.Phone,
+                CreateDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                LastLogin = DateTime.Now
+            };
+            _adminService.Add(admin);
+         
+            var dto = _adminService.GetByMailDtoAdmin(admin.Email);
+            return new SuccessDataResult<AdminDto>(dto, "Başarıyla Kayıt Olundu.");
+        }
         public IResult UserExists(string email)
         {
             if (_userService.GetByMail(email) != null)
@@ -143,5 +188,7 @@ namespace Business.Concrete
             return new ErrorResult("User Or Code not found");
 
         }
+
+       
     }
 }

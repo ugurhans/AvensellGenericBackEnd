@@ -68,6 +68,7 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<OrderContactInfo> OrderContactInfos { get; set; }
         public DbSet<PaytrLog> PaytrLogs { get; set; }
         public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
+        public DbSet<Admin>Admins { get; set; }
 
 
     }

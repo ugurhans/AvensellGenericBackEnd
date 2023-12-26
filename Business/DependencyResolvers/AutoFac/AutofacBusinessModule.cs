@@ -115,6 +115,9 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<ResetPasswordCodeManager>().As<IResetPasswordCodeService>().SingleInstance();
             builder.RegisterType<EfResetPasswordCodeDal>().As<IResetPasswordCodeDal>().SingleInstance();
 
+            builder.RegisterType<AdminMAnager>().As<IAdminService>().SingleInstance();
+            builder.RegisterType<EfAdminDal>().As<IAdminDal>().SingleInstance();
+
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
