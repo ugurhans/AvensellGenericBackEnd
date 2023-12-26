@@ -118,6 +118,12 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<AdminMAnager>().As<IAdminService>().SingleInstance();
             builder.RegisterType<EfAdminDal>().As<IAdminDal>().SingleInstance();
 
+            builder.RegisterType<ShopManager>().As<IShopService>().SingleInstance();
+            builder.RegisterType<EfShopDal>().As<IShopDal>().SingleInstance();
+
+            builder.RegisterType<ThemaManager>().As<IThemaService>().SingleInstance();
+            builder.RegisterType<EfThemaDal>().As<IThemaDal>().SingleInstance();
+
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();

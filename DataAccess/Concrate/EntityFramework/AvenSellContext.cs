@@ -70,6 +70,9 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
         public DbSet<Admin>Admins { get; set; }
 
+        public DbSet<Shop> Shops { get; set; }
+        public DbSet<Thema> Themas { get; set; }
+
 
     }
 }
