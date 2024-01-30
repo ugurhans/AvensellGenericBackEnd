@@ -238,114 +238,134 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<ProductSimpleDto>>(products);
         }
+        public IDataResult<List<ProductSimpleDto>> GetRandomRecommendations()
+        {
+            // Tüm ürünleri al
+            var allProducts = _productDal.GetAll();
 
+            // Ürünleri karıştır
+            var shuffledProducts = ShuffleList(allProducts);
+
+            // İlk 5 ürünü seç
+            var recommendedProducts = shuffledProducts.Take(5)
+                                               .Select(product => new ProductSimpleDto
+                                               {
+                                                   Id = product.Id,
+                                                   Name = product.Name,
+                                                   UnitPrice = product.UnitPrice,
+                                                   Discount = product.Discount,
+                                                   OrderBy = product.OrderBy,
+                                                   UnitType = product.UnitType,
+                                                   UnitQuantity = product.UnitQuantity,
+                                                   UnitCount = product.UnitCount,
+                                                   ImageUrl = product.ImageUrl,
+                                                   PaidPrice = product.UnitPrice - product.Discount,
+                                                   BrandName = product.Brand?.Name
+                                               })
+                                               .ToList();
+
+            return new SuccessDataResult<List<ProductSimpleDto>>(recommendedProducts);
+        }
+
+        // Listeyi karıştırmak için yardımcı metod
+        private List<T> ShuffleList<T>(List<T> inputList)
+        {
+            var random = new Random();
+            int n = inputList.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = random.Next(n + 1);
+                T value = inputList[k];
+                inputList[k] = inputList[n];
+                inputList[n] = value;
+            }
+            return inputList;
+        }
         public IDataResult<List<ProductSimpleDto>> GetAllRecommendedFiveProducts(int basketId)
         {
             var basket = _basketItemDal.GetAll(x => x.BasketId == basketId);
 
             if (basket.Count > 0)
             {
-                var orderItemCounts = new Dictionary<int, int>();
+                var productIdsInBasket = basket.Select(item => item.ProductId).Distinct().ToList();
 
-                foreach (var item in basket)
-                {
-                    var productId = item.ProductId;
+                // Sepetteki ürünlerin kategorilerini al
+                var categoryIds = _productDal.GetAll(x => productIdsInBasket.Contains(x.Id))
+                                             .Select(product => product.CategoryId)
+                                             .Distinct()
+                                             .ToList();
 
-                    var orderItems = _orderItemDal.GetAll(x => x.ProductId == productId);
-
-                    foreach (var orderItem in orderItems)
-                    {
-                        if (orderItemCounts.ContainsKey((int)orderItem.ProductId))
-                        {
-                            orderItemCounts[(int)orderItem.ProductId]++;
-                        }
-                        else
-                        {
-                            orderItemCounts[(int)orderItem.ProductId] = 1;
-                        }
-                    }
-                }
-
-                var maxRecurringItems = orderItemCounts.OrderByDescending(x => x.Value).Take(5);
-
+                // Toplamda 5 farklı ürün seç
                 var recommendedItems = new List<ProductSimpleDto>();
-                foreach (var item in maxRecurringItems)
+                foreach (var categoryId in categoryIds)
                 {
-                    var productId = item.Key;
-                    var product = _productDal.Get(x => x.Id == productId);
+                    // Kategorideki ürünleri çek
+                    var productsInCategory = _productDal.GetAll(x => x.CategoryId == categoryId).ToList();
 
-                    if (product != null)
+                    if (productsInCategory.Any())
                     {
+                        // Kategorideki ürünleri karıştır
+                        var shuffledProducts = ShuffleList(productsInCategory).Take(1).ToList();
+
+                        // İlk ürünü seç
+                        var selectedProduct = shuffledProducts.First();
+
+                        // Ürünü recommendedItems listesine ekle
                         var recommendedProduct = new ProductSimpleDto
                         {
-                            Id = product.Id,
-                            CategoryId = product.CategoryId,
-                            Name = product.Name,
-                            UnitPrice = product.UnitPrice,
-                            Discount = product.Discount,
-                            OrderBy = product.OrderBy,
-                            UnitType = product.UnitType,
-                            UnitQuantity = product.UnitQuantity,
-                            UnitCount = product.UnitCount,
-                            ImageUrl = product.ImageUrl,
-                            PaidPrice = product.UnitPrice - product.Discount,
-                            BrandName = product.Brand?.Name
+                            Id = selectedProduct.Id,
+                            CategoryId = selectedProduct.CategoryId,
+                            Name = selectedProduct.Name,
+                            UnitPrice = selectedProduct.UnitPrice,
+                            Discount = selectedProduct.Discount,
+                            OrderBy = selectedProduct.OrderBy,
+                            UnitType = selectedProduct.UnitType,
+                            UnitQuantity = selectedProduct.UnitQuantity,
+                            UnitCount = selectedProduct.UnitCount,
+                            ImageUrl = selectedProduct.ImageUrl,
+                            PaidPrice = selectedProduct.UnitPrice - selectedProduct.Discount,
+                            BrandName = selectedProduct.Brand?.Name,
+                            // Yeni eklenen özellikler
                         };
 
                         recommendedItems.Add(recommendedProduct);
                     }
                 }
+
+                // Eğer 5 farklı ürün elde edilemediyse, eksik olan ürünleri rastgele seç
                 if (recommendedItems.Count < 5)
                 {
-                    if (recommendedItems.Count == 0)
+                    var remainingProductCount = 5 - recommendedItems.Count;
+                    // var remainingProducts = _productDal.GetAll(x => !recommendedItems.Any(r => r.Id == x.Id)).OrderBy(x => Guid.NewGuid()).Take(remainingProductCount).ToList();
+                    var recommendedIds = recommendedItems.Select(recommended => recommended.Id).ToList();
+
+                    // remainingProducts'i seçerken recommendedItems'te olmayan ürünleri al
+                    var remainingProducts = _productDal.GetAll(product => !recommendedIds.Any(recommendedId => recommendedId == product.Id))
+
+                    .OrderBy(product => Guid.NewGuid())
+                    .Take(remainingProductCount)
+                    .ToList();
+                    foreach (var remainingProduct in remainingProducts)
                     {
-                        var basketProductIds = basket.Select(x => x.ProductId).Distinct().ToList();
-                        var similarItems = _productDal.GetAll(x => basketProductIds.Contains(x.Id)).Take(5);
-
-                        foreach (var similarItem in similarItems)
+                        var recommendedProduct = new ProductSimpleDto
                         {
-                            var similarProduct = new ProductSimpleDto
-                            {
-                                Id = similarItem.Id,
-                                Name = similarItem.Name,
-                                UnitPrice = similarItem.UnitPrice,
-                                Discount = similarItem.Discount,
-                                OrderBy = similarItem.OrderBy,
-                                UnitType = similarItem.UnitType,
-                                UnitQuantity = similarItem.UnitQuantity,
-                                UnitCount = similarItem.UnitCount,
-                                ImageUrl = similarItem.ImageUrl,
-                                PaidPrice = similarItem.UnitPrice - similarItem.Discount,
-                                BrandName = similarItem.Brand?.Name
-                            };
+                            Id = remainingProduct.Id,
+                            CategoryId = remainingProduct.CategoryId,
+                            Name = remainingProduct.Name,
+                            UnitPrice = remainingProduct.UnitPrice,
+                            Discount = remainingProduct.Discount,
+                            OrderBy = remainingProduct.OrderBy,
+                            UnitType = remainingProduct.UnitType,
+                            UnitQuantity = remainingProduct.UnitQuantity,
+                            UnitCount = remainingProduct.UnitCount,
+                            ImageUrl = remainingProduct.ImageUrl,
+                            PaidPrice = remainingProduct.UnitPrice - remainingProduct.Discount,
+                            BrandName = remainingProduct.Brand?.Name,
+                            // Yeni eklenen özellikler
+                        };
 
-                            recommendedItems.Add(similarProduct);
-                        }
-                    }
-                    else
-                    {
-                        var categoryIds = recommendedItems.Select(x => x.CategoryId).Distinct().ToList();
-                        var additionalItems = _productDal.GetAll(x => categoryIds.Contains(x.CategoryId) && !recommendedItems.Any(r => r.Id == x.Id)).Take(5 - recommendedItems.Count);
-
-                        foreach (var additionalItem in additionalItems)
-                        {
-                            var additionalProduct = new ProductSimpleDto
-                            {
-                                Id = additionalItem.Id,
-                                Name = additionalItem.Name,
-                                UnitPrice = additionalItem.UnitPrice,
-                                Discount = additionalItem.Discount,
-                                OrderBy = additionalItem.OrderBy,
-                                UnitType = additionalItem.UnitType,
-                                UnitQuantity = additionalItem.UnitQuantity,
-                                UnitCount = additionalItem.UnitCount,
-                                ImageUrl = additionalItem.ImageUrl,
-                                PaidPrice = additionalItem.UnitPrice - additionalItem.Discount,
-                                BrandName = additionalItem.Brand?.Name
-                            };
-
-                            recommendedItems.Add(additionalProduct);
-                        }
+                        recommendedItems.Add(recommendedProduct);
                     }
                 }
 
@@ -356,6 +376,7 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<ProductSimpleDto>>("Öneri almak için sepete ürün ekleyiniz.");
             }
         }
+
 
         public IDataResult<int> GetAllCount()
         {

@@ -30,5 +30,6 @@ namespace Business.Abstract
         IResult ReOrder(int from, int to, int productId);
         IDataResult<List<ProductSimpleDto>> GetAllCampaignProducts(int productCount);
         IDataResult<List<ProductSimpleDto>> GetAllRecommendedFiveProducts(int basketId);
+        IDataResult<List<ProductSimpleDto>> GetRandomRecommendations();
     }
 }
