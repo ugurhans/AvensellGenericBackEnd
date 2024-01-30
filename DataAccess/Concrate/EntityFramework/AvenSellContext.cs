@@ -11,6 +11,7 @@ using Entity.Concrete;
 using static Azure.Core.HttpHeader;
 using Entity.Dto;
 using Entity.Concrate.paytr;
+using DataAccess.Concrate.EntityFramework;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -51,6 +52,10 @@ namespace DataAccess.Concrete.EntityFramework
 
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<UserCoupon> UserCoupons { get; set; }
+        public DbSet<CouponProduct> couponProducts { get; set; }
+        public DbSet<CouponCategory> couponCategories { get; set; }
+        public DbSet<CouponTimed>  couponTimeds { get; set; }
+
 
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -58,6 +63,12 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<CampaignGift> CampaignGifts { get; set; }
         public DbSet<CampaignProductGroup> CampaignProductGroups { get; set; }
         public DbSet<CampaignSecondDiscount> CampaignSecondDiscounts { get; set; }
+        public DbSet<CampaignCategoryPercentageDiscount> CampaignCategoryPercentageDiscounts { get; set; }
+        public DbSet<CampaignCombinedDiscount> CampaignCombinedDiscounts { get; set; }
+        public DbSet<CampaignProductPercentageDiscount> CampaignProductPercentageDiscounts { get; set; }
+        public DbSet<CampaignSpecialDiscount> CampaignSpecialDiscounts { get; set; }
+        public DbSet<CampaignGiftProduct> CampaignGiftProducts { get; set; }
+
 
 
         public DbSet<FAQs> FAQs { get; set; }

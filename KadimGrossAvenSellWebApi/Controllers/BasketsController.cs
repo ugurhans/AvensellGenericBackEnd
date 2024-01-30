@@ -66,8 +66,52 @@ namespace WebAPI.Controllers
                 case CampaignTypes.SecondDiscountCampaign:
                     result = _basketService.ApplySecondDiscountCampaign(campaignId, basketId);
                     break;
+                case CampaignTypes.SpecialDiscountCampaign:
+                    result = _basketService.ApplySpecialDiscountCampaign(campaignId, basketId);
+                    break;
+                case CampaignTypes.GiftProductCampaign:
+                    result = _basketService.ApplyGiftProductCampaign(campaignId, basketId);
+                    break;
+                case CampaignTypes.CombinedDiscountCampaign:
+                    result = _basketService.ApplyCombinedDiscountCampaign(campaignId, basketId);
+                    break;
+                case CampaignTypes.CategoryPercentageDiscountCampaign:
+                    result = _basketService.ApplyCategoryPercentageDiscountCampaign(campaignId, basketId);
+                    break;
+                case CampaignTypes.ProductPercentageDiscountCampaign:
+                    result = _basketService.ApplyProductPercentageDiscountCampaign(campaignId, basketId);
+                    break;
                 default:
                     result = new ErrorDataResult<BasketDetailDto>("Kampanya Uygulanırken Sorun Yaşandı.");
+                    break;
+            }
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+
+
+        [HttpGet("ApplyCoupon")]
+        public IActionResult ApplyCoupon(int basketId, string couponcode, CouponTypes couponTypes)
+        {
+            IDataResult<BasketDetailDto> result = null;
+            switch (couponTypes)
+            {
+                case CouponTypes.CouponCategory:
+                    result = _basketService.ApplyCategoryCoupon(couponcode, basketId);
+                    break;
+                case CouponTypes.CouponProduct:
+                    result = _basketService.ApplyProductCoupon(couponcode, basketId);
+                    break;
+                case CouponTypes.CouponTimed:
+                    result = _basketService.ApplyTimedCoupon(couponcode, basketId);
+                    break;
+               
+                default:
+                    result = new ErrorDataResult<BasketDetailDto>("kupoon Uygulanırken Sorun Yaşandı.");
                     break;
             }
             if (result.Success)

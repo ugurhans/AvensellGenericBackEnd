@@ -53,6 +53,10 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfCouponDal>().As<ICouponDal>().SingleInstance();
             builder.RegisterType<EfUserCouponDal>().As<IUserCouponDal>().SingleInstance();
 
+            builder.RegisterType<EfCouponCategoryDal>().As<ICategoryCouponDal>().SingleInstance(); 
+            builder.RegisterType<EfCouponProductDal>().As<IProductCouponDal>().SingleInstance();
+            builder.RegisterType<EfCouponTimedDal>().As<ITimedCouponDal>().SingleInstance();
+            builder.RegisterType<CouponManager>().As<ICouponService>().SingleInstance();
 
 
             builder.RegisterType<SliderManager>().As<ISliderService>().SingleInstance();
@@ -73,6 +77,12 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfCampaignGiftDal>().As<ICampaignGiftDal>().SingleInstance();
             builder.RegisterType<EfCampaignProductGroupDal>().As<ICampaignProductGroupDal>().SingleInstance();
             builder.RegisterType<EfCampaignSecondDiscountDal>().As<ICampaignSecondDiscountDal>().SingleInstance();
+            builder.RegisterType<EfCampaignSpecialDiscountDal>().As<ICampaignSpecialDiscountDal>().SingleInstance();
+            builder.RegisterType<EfCampaignProductPercentageDiscountDal>().As<ICampaignProductPercentageDiscountDal>().SingleInstance();
+            builder.RegisterType<EfCampaignGiftProductDal>().As<ICampaignGiftProductDal>().SingleInstance();
+            builder.RegisterType<EfCampaignCategoryPercentageDiscountDal>().As<ICampaignCategoryPercentageDiscountDal>().SingleInstance();
+            builder.RegisterType<EfCampaignCombinedDiscountDal>().As<ICampaignCombinedDiscountDal>().SingleInstance();
+            
 
             builder.RegisterType<BrandManager>().As<IBrandService>().SingleInstance();
             builder.RegisterType<EfBrandDal>().As<IBrandDal>().SingleInstance();

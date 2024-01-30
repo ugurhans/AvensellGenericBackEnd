@@ -19,8 +19,9 @@ namespace Entity.Concrete
         public int? CampaignId { get; set; }
         public decimal? CampaignDiscount { get; set; }
 
-
+        public CouponTypes? coupontype { get; set; }
         public bool? IsCouponApplied { get; set; }
+        public string? CouponCode { get; set; }
         public int? CouponId { get; set; }
         public decimal? CouponDiscount { get; set; }
 

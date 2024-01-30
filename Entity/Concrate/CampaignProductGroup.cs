@@ -15,6 +15,9 @@ namespace Entity.Concrate
         public bool? IsActive { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public string? CampaignName { get; set; }
+        public string? CampaignDetail { get; set; }
+        public string? CampaignImageUrl { get; set; }
     }
 
 }

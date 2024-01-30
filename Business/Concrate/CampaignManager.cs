@@ -5,11 +5,14 @@ using Core.Entities;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrate.EntityFramework;
 using Entity.Abtract;
 using Entity.Concrate;
+using Entity.Concrate.paytr;
 using Entity.Concrete;
 using Entity.Dto;
 using Entity.Enum;
+using Entity.Request;
 
 namespace Business.Concrate
 {
@@ -19,18 +22,34 @@ namespace Business.Concrate
         private readonly ICampaignProductGroupDal _campaignProductGroupDal;
         private readonly ICampaignSecondDiscountDal _campaignSecondDiscountDal;
         private readonly IBasketDal _basketDal;
+        private readonly ICampaignCombinedDiscountDal _combinedDiscountCampaignDal;
+        private readonly ICampaignProductPercentageDiscountDal _productPercentageDiscountCampaignDal;
+        private readonly ICampaignGiftProductDal _giftProductCampaignDal;
+        private readonly ICampaignSpecialDiscountDal _specialDiscountCampaignDal;
+        private readonly ICampaignCategoryPercentageDiscountDal  _categoryPercentageDiscountCampaignDal;
 
-        public CampaignManager(ICampaignGiftDal campaignGiftDal, ICampaignProductGroupDal campaignProductGrouptDal, ICampaignSecondDiscountDal campaignSecondDiscountDal, IBasketDal basketDal)
+        public CampaignManager(ICampaignGiftDal campaignGiftDal, ICampaignProductGroupDal campaignProductGrouptDal, ICampaignSecondDiscountDal campaignSecondDiscountDal, IBasketDal basketDal, ICampaignCategoryPercentageDiscountDal campaignCategoryPercentageDiscountDal, ICampaignSpecialDiscountDal campaignSpecialDiscountDal, ICampaignGiftProductDal  campaignGiftProductDal, ICampaignProductPercentageDiscountDal campaignProductPercentageDiscount, ICampaignCombinedDiscountDal campaignCombinedDiscountDal)
         {
             _campaignGiftDal = campaignGiftDal;
             _campaignProductGroupDal = campaignProductGrouptDal;
             _campaignSecondDiscountDal = campaignSecondDiscountDal;
             _basketDal = basketDal;
+            _combinedDiscountCampaignDal = campaignCombinedDiscountDal;
+            _productPercentageDiscountCampaignDal = campaignProductPercentageDiscount;
+            _giftProductCampaignDal = campaignGiftProductDal;
+            _specialDiscountCampaignDal = campaignSpecialDiscountDal;
+            _categoryPercentageDiscountCampaignDal = campaignCategoryPercentageDiscountDal;
+
+        }
+
+        public IDataResult<CampaignDto> GetCampaignID(int id)
+        {
+            throw new NotImplementedException();
         }
 
         public IResult Add(CampaignAddDto campaignAddDto)
         {
-            // campaignType parametresine göre ilgili kampanya nesnesini oluşturuyoruz.
+            //campaignType parametresine göre ilgili kampanya nesnesini oluşturuyoruz.
             var campaign = campaignAddDto.CampaignType;
             switch (campaignAddDto.CampaignType)
             {
@@ -42,7 +61,12 @@ namespace Business.Concrate
                         IsActive = campaignAddDto.IsActive,
                         StartDate = campaignAddDto.StartDate,
                         EndDate = campaignAddDto.EndDate,
-                        ProductSecondId = (int)campaignAddDto.ProductSecondId
+                        ProductSecondId = (int)campaignAddDto.ProductSecondId,
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
+                        
+
                     };
                     _campaignGiftDal.Add(campaignGift);
                     break;
@@ -55,7 +79,10 @@ namespace Business.Concrate
                         ProductSecondDiscount = campaignAddDto.ProductSecondDiscount,
                         IsActive = campaignAddDto.IsActive,
                         StartDate = campaignAddDto.StartDate,
-                        EndDate = campaignAddDto.EndDate
+                        EndDate = campaignAddDto.EndDate,
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
                     };
                     _campaignProductGroupDal.Add(campaignProductGroup);
                     break;
@@ -66,15 +93,359 @@ namespace Business.Concrate
                         ProductSecondDiscount = campaignAddDto.ProductSecondDiscount,
                         IsActive = campaignAddDto.IsActive,
                         StartDate = campaignAddDto.StartDate,
-                        EndDate = campaignAddDto.EndDate
+                        EndDate = campaignAddDto.EndDate,
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
                     };
                     _campaignSecondDiscountDal.Add(campaignSecondDiscount);
                     break;
+                case CampaignTypes.ProductPercentageDiscountCampaign:
+                    var ProductPercentageDiscount = new CampaignProductPercentageDiscount
+                    {
+                        IsActive = campaignAddDto.IsActive,
+                        StartDate = campaignAddDto.StartDate,
+                        EndDate = campaignAddDto.EndDate,
+                        MinPurchaseAmount = campaignAddDto.MinPurchaseAmount,
+                        CombinedProduct = campaignAddDto.CombinedProduct,
+                        PercentageDiscountRate = campaignAddDto.PercentageDiscountRate,
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
+                    };
+                    _productPercentageDiscountCampaignDal.Add(ProductPercentageDiscount);
+                    break;
+                case CampaignTypes.CategoryPercentageDiscountCampaign:
+                    var categoryPercentageDiscount = new CampaignCategoryPercentageDiscount
+                    {
+                        IsActive = campaignAddDto.IsActive,
+                        StartDate = campaignAddDto.StartDate,
+                        EndDate = campaignAddDto.EndDate,
+                        MinPurchaseAmount = campaignAddDto.MinPurchaseAmount,
+                        CategoryId = campaignAddDto.CategoryId,
+                        PercentageDiscountRate = campaignAddDto.PercentageDiscountRate,
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
+                    };
+                    _categoryPercentageDiscountCampaignDal.Add(categoryPercentageDiscount);
+                    break;
+                case CampaignTypes.GiftProductCampaign:
+                    var campaignGiftProduct = new CampaignGiftProduct
+                    {
+
+                        IsActive = campaignAddDto.IsActive,
+                        StartDate = campaignAddDto.StartDate,
+                        EndDate = campaignAddDto.EndDate,
+                        GiftProductId = campaignAddDto.GiftProductId,
+                        MinPurchaseAmount = campaignAddDto.MinPurchaseAmount,
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
+
+                    };
+                    _giftProductCampaignDal.Add(campaignGiftProduct);
+                    break;
+                case CampaignTypes.SpecialDiscountCampaign:
+                    var campaignSpecialDiscount = new CampaignSpecialDiscount
+                    {
+
+                        IsActive = campaignAddDto.IsActive,
+                        StartDate = campaignAddDto.StartDate,
+                        EndDate = campaignAddDto.EndDate,
+                        MinPurchaseAmount = campaignAddDto.MinPurchaseAmount,
+                        ProductID = campaignAddDto.ProductId,
+                        PromotionPeriodName = campaignAddDto.PromotionPeriodName,   // "Bugüne Özel" veya "Saatlik Teklifler" gibi
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
+                    };
+
+                    _specialDiscountCampaignDal.Add(campaignSpecialDiscount);
+                    break;
+                case CampaignTypes.CombinedDiscountCampaign:
+                    var campaignCombinedDiscount = new CampaignCombinedDiscount
+                    {
+
+                        IsActive = campaignAddDto.IsActive,
+                        StartDate = campaignAddDto.StartDate,
+                        EndDate = campaignAddDto.EndDate,
+                        MaxDiscountAmount = campaignAddDto.MaxDiscountAmount,
+                        CombinedProduct = campaignAddDto.CombinedProduct,
+                        PercentageDiscountRate = campaignAddDto.PercentageDiscountRate,
+                        CampaignDetail = campaignAddDto.CampaignDetail,
+                        CampaignImageUrl = campaignAddDto.CampaignImageUrl,
+                        CampaignName = campaignAddDto.CampaignName,
+                    };
+                    _combinedDiscountCampaignDal.Add(campaignCombinedDiscount);
+                    break;
+
                 default:
                     throw new ArgumentException("Invalid campaign type.");
             }
             return new SuccessResult(Messages.CampaignAdded);
         }
+
+        public IResult Update(CampaignUpdateDto campaignUpdateDto)
+        {
+            var existingCampaign = GetById(campaignUpdateDto.Id, campaignUpdateDto.CampaignType);
+
+            if (existingCampaign == null)
+            {
+                return new ErrorResult();
+            }
+
+
+            switch (campaignUpdateDto.CampaignType)
+            {
+                case CampaignTypes.GiftCampaign:
+                    var campaignGift = (CampaignGift)existingCampaign;
+                  
+                    campaignGift.ProductFirstId = campaignUpdateDto.ProductIds[0];
+                    campaignGift.ProductSecondId = campaignUpdateDto.ProductIds[1];
+                    campaignGift.ProductGift = campaignUpdateDto.GiftProductId;
+                    campaignGift.IsActive = campaignUpdateDto.IsActive;
+                    campaignGift.StartDate = campaignUpdateDto.StartDate;
+                    campaignGift.EndDate = campaignUpdateDto.EndDate;
+                    campaignGift.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    campaignGift.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    campaignGift.CampaignName = campaignUpdateDto.CampaignName;
+              
+                    //
+                    //campaignGift.Discount = campaignAddDto.Discount;
+                   
+                
+     
+                
+                    _campaignGiftDal.Update(campaignGift);
+                    break;
+                case CampaignTypes.ProductGroupCampaign:
+                    var campaignProductGroup = (CampaignProductGroup)existingCampaign;
+
+                    campaignProductGroup.ProductFirstId = campaignUpdateDto.ProductIds[0];
+                    campaignProductGroup.ProductSecondId = campaignUpdateDto.ProductIds[1];
+                    campaignProductGroup.ProductSecondDiscount = campaignUpdateDto.ProductSecondDiscount;
+                    campaignProductGroup.ProductFirstDiscount = campaignUpdateDto.ProductFirstDiscount;
+                    campaignProductGroup.IsActive = campaignUpdateDto.IsActive;
+                    campaignProductGroup.StartDate = campaignUpdateDto.StartDate;
+                    campaignProductGroup.EndDate = campaignUpdateDto.EndDate;
+                    campaignProductGroup.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    campaignProductGroup.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    campaignProductGroup.CampaignName = campaignUpdateDto.CampaignName;
+
+        
+                    //    ProductFirstDiscount = campaignAddDto.ProductFirstDiscount,
+                    //    ProductSecondDiscount = campaignAddDto.ProductSecondDiscount,
+             
+                    _campaignProductGroupDal.Update(campaignProductGroup);
+                    break;
+                case CampaignTypes.SecondDiscountCampaign:
+                    var campaignSecondDiscount = (CampaignSecondDiscount)existingCampaign;
+                  
+                    campaignSecondDiscount.ProductFirstId = campaignUpdateDto.ProductIds[0];
+                    campaignSecondDiscount.ProductSecondDiscount = campaignUpdateDto.MaxDiscountAmount;
+                    campaignSecondDiscount.IsActive = campaignUpdateDto.IsActive;
+                    campaignSecondDiscount.StartDate = campaignUpdateDto.StartDate;
+                    campaignSecondDiscount.EndDate = campaignUpdateDto.EndDate;
+                    campaignSecondDiscount.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    campaignSecondDiscount.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    campaignSecondDiscount.CampaignName = campaignUpdateDto.CampaignName;
+                    
+           
+                    //    ProductSecondDiscount = campaignAddDto.ProductSecondDiscount,
+              
+                    _campaignSecondDiscountDal.Update(campaignSecondDiscount);
+                    break;
+                case CampaignTypes.ProductPercentageDiscountCampaign:
+                    var productPercentageDiscount = (CampaignProductPercentageDiscount)existingCampaign;
+
+                    productPercentageDiscount.CombinedProduct = campaignUpdateDto.CombinedProduct;
+                    productPercentageDiscount.MinPurchaseAmount = campaignUpdateDto.MinPurchaseAmount;
+                    productPercentageDiscount.IsActive = campaignUpdateDto.IsActive;
+                    productPercentageDiscount.StartDate = campaignUpdateDto.StartDate;
+                    productPercentageDiscount.EndDate = campaignUpdateDto.EndDate;
+                    productPercentageDiscount.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    productPercentageDiscount.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    productPercentageDiscount.CampaignName = campaignUpdateDto.CampaignName;
+                    productPercentageDiscount.PercentageDiscountRate = campaignUpdateDto.PercentageDiscountRate;
+
+
+                    _productPercentageDiscountCampaignDal.Update(productPercentageDiscount);
+                    break;
+                case CampaignTypes.CategoryPercentageDiscountCampaign:
+                    var categoryPercentageDiscount = (CampaignCategoryPercentageDiscount)existingCampaign;
+
+                    categoryPercentageDiscount.CategoryId = campaignUpdateDto.CategoryId;
+                    categoryPercentageDiscount.MinPurchaseAmount = campaignUpdateDto.MinPurchaseAmount;
+                    categoryPercentageDiscount.IsActive = campaignUpdateDto.IsActive;
+                    categoryPercentageDiscount.StartDate = campaignUpdateDto.StartDate;
+                    categoryPercentageDiscount.EndDate = campaignUpdateDto.EndDate;
+                    categoryPercentageDiscount.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    categoryPercentageDiscount.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    categoryPercentageDiscount.CampaignName = campaignUpdateDto.CampaignName;
+                    categoryPercentageDiscount.PercentageDiscountRate = campaignUpdateDto.PercentageDiscountRate;
+   
+         
+              
+          
+                    _categoryPercentageDiscountCampaignDal.Update(categoryPercentageDiscount);
+                    break;
+                case CampaignTypes.GiftProductCampaign:
+                    var giftProductCampaign = (CampaignGiftProduct)existingCampaign;
+
+                    giftProductCampaign.GiftProductId = campaignUpdateDto.GiftProductId;
+                    giftProductCampaign.IsActive = campaignUpdateDto.IsActive;
+                    giftProductCampaign.StartDate = campaignUpdateDto.StartDate;
+                    giftProductCampaign.EndDate = campaignUpdateDto.EndDate;  
+                    giftProductCampaign.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    giftProductCampaign.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    giftProductCampaign.CampaignName = campaignUpdateDto.CampaignName;
+                    giftProductCampaign.MinPurchaseAmount = campaignUpdateDto.MinPurchaseAmount;
+                  
+         
+                    _giftProductCampaignDal.Update(giftProductCampaign);
+                    break;
+                case CampaignTypes.SpecialDiscountCampaign:
+                    var specialDiscountCampaign = (CampaignSpecialDiscount)existingCampaign;
+
+                    specialDiscountCampaign.PromotionPeriodName = campaignUpdateDto.PromotionPeriodName;
+                    specialDiscountCampaign.IsActive = campaignUpdateDto.IsActive;
+                    specialDiscountCampaign.StartDate = campaignUpdateDto.StartDate;
+                    specialDiscountCampaign.EndDate = campaignUpdateDto.EndDate;
+                    specialDiscountCampaign.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    specialDiscountCampaign.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    specialDiscountCampaign.CampaignName = campaignUpdateDto.CampaignName;
+                    specialDiscountCampaign.ProductID = campaignUpdateDto.ProductId;   //
+                    specialDiscountCampaign.MinPurchaseAmount  = campaignUpdateDto.MinPurchaseAmount;
+            
+                   
+       
+                    _specialDiscountCampaignDal.Update(specialDiscountCampaign);
+                    break;
+                case CampaignTypes.CombinedDiscountCampaign:
+                    var combinedDiscountCampaign = (CampaignCombinedDiscount)existingCampaign;
+
+                   
+                    combinedDiscountCampaign.MaxDiscountAmount = campaignUpdateDto.MaxDiscountAmount;
+                    combinedDiscountCampaign.IsActive = campaignUpdateDto.IsActive;
+                    combinedDiscountCampaign.StartDate = campaignUpdateDto.StartDate;
+                    combinedDiscountCampaign.EndDate = campaignUpdateDto.EndDate;
+                    combinedDiscountCampaign.CampaignDetail = campaignUpdateDto.CampaignDetail;
+                    combinedDiscountCampaign.CampaignImageUrl = campaignUpdateDto.CampaignImageUrl;
+                    combinedDiscountCampaign.CampaignName = campaignUpdateDto.CampaignName;
+                    combinedDiscountCampaign.PercentageDiscountRate = campaignUpdateDto.PercentageDiscountRate;
+
+                    _combinedDiscountCampaignDal.Update(combinedDiscountCampaign);
+                    break;
+
+                default:
+                    return new ErrorResult("Invalid campaign type.");
+            }
+
+            return new SuccessResult();
+        }
+
+        private ICampaign GetById(int campaignId, CampaignTypes? campaignType)
+        {
+
+            switch (campaignType)
+            {
+                case CampaignTypes.GiftCampaign:
+                    return _campaignGiftDal.Get(b => b.Id == campaignId);
+                case CampaignTypes.ProductGroupCampaign:
+                    return _campaignProductGroupDal.Get(b => b.Id == campaignId);
+                case CampaignTypes.SecondDiscountCampaign:
+                    return _campaignSecondDiscountDal.Get(b => b.Id == campaignId);
+                case CampaignTypes.ProductPercentageDiscountCampaign:
+                    return _productPercentageDiscountCampaignDal.Get(b => b.Id == campaignId);
+                case CampaignTypes.CategoryPercentageDiscountCampaign:
+                    return _categoryPercentageDiscountCampaignDal.Get(b => b.Id == campaignId);
+                case CampaignTypes.GiftProductCampaign:
+                    return _giftProductCampaignDal.Get(b => b.Id == campaignId);
+                case CampaignTypes.SpecialDiscountCampaign:
+                    return _specialDiscountCampaignDal.Get(b => b.Id == campaignId);
+                case CampaignTypes.CombinedDiscountCampaign:
+                    return _combinedDiscountCampaignDal.Get(b => b.Id == campaignId);
+
+                default:
+                    return null;
+            }
+        }
+
+
+
+        public IResult Delete(int campaignId, CampaignTypes campaignType)
+        {
+            // Kampanya türüne göre ilgili repository'yi seç ve Delete metodunu çağır
+            switch (campaignType)
+            {
+                case CampaignTypes.GiftCampaign:
+                    var giftCampaign = _campaignGiftDal.Get(b => b.Id == campaignId);
+                    if (giftCampaign == null)
+                        return new ErrorResult();
+
+                    _campaignGiftDal.DeleteRange(giftCampaign.Id);
+                    break;
+                case CampaignTypes.ProductGroupCampaign:
+                    var productGroupCampaign = _campaignProductGroupDal.Get(b => b.Id == campaignId);
+                    if (productGroupCampaign == null)
+                        return new ErrorResult();
+
+                    _campaignProductGroupDal.DeleteRange(productGroupCampaign.Id);
+                    break;
+                case CampaignTypes.SecondDiscountCampaign:
+                    var secondDiscountCampaign = _campaignSecondDiscountDal.Get(b => b.Id == campaignId);
+                    if (secondDiscountCampaign == null)
+                        return new ErrorResult();
+
+                    _campaignSecondDiscountDal.DeleteRange(secondDiscountCampaign.Id);
+                    break;
+                case CampaignTypes.ProductPercentageDiscountCampaign:
+                    var productPercentageDiscountCampaign = _productPercentageDiscountCampaignDal.Get(b => b.Id == campaignId);
+                    if (productPercentageDiscountCampaign == null)
+                        return new ErrorResult();
+
+                    _productPercentageDiscountCampaignDal.DeleteRange(productPercentageDiscountCampaign.Id);
+                    break;
+                case CampaignTypes.CategoryPercentageDiscountCampaign:
+                    var categoryPercentageDiscountCampaign = _categoryPercentageDiscountCampaignDal.Get(b => b.Id == campaignId);
+                    if (categoryPercentageDiscountCampaign == null)
+                        return new ErrorResult();
+
+                    _categoryPercentageDiscountCampaignDal.DeleteRange(categoryPercentageDiscountCampaign.Id);
+                    break;
+                case CampaignTypes.GiftProductCampaign:
+                    var giftProductCampaign = _giftProductCampaignDal.Get(b => b.Id == campaignId);
+                    if (giftProductCampaign == null)
+                        return new ErrorResult();
+
+                    _giftProductCampaignDal.DeleteRange(giftProductCampaign.Id);
+                    break;
+                case CampaignTypes.SpecialDiscountCampaign:
+                    var specialDiscountCampaign = _specialDiscountCampaignDal.Get(b => b.Id == campaignId);
+                    if (specialDiscountCampaign == null)
+                        return new ErrorResult();
+
+                    _specialDiscountCampaignDal.DeleteRange(specialDiscountCampaign.Id);
+                    break;
+                case CampaignTypes.CombinedDiscountCampaign:
+                    var combinedDiscountCampaign = _combinedDiscountCampaignDal.Get(b => b.Id == campaignId);
+                    if (combinedDiscountCampaign == null)
+                        return new ErrorResult();
+
+                    _combinedDiscountCampaignDal.DeleteRange(combinedDiscountCampaign.Id);
+                    break;
+
+                default:
+                    return new ErrorResult("Invalid campaign type.");
+            }
+
+            return new SuccessResult();
+        }
+
+
+
+        
 
 
         public IDataResult<List<CampaignDto>> GetAllDto()
@@ -124,6 +495,89 @@ namespace Business.Concrate
                 };
                 campaignDtos.Add(campaignDto);
             }
+
+            var categoryPercentage = _categoryPercentageDiscountCampaignDal.GetAllDto(g => g.IsActive == true);
+            foreach (var campaign in categoryPercentage)
+            {
+                var campaignDto = new CampaignDto
+                {
+                    Id = campaign.Id,
+                    CampaignImageUrl = "",
+                    EndDate = campaign.EndDate,
+                    IsActive = campaign.IsActive,
+                    StartDate = campaign.StartDate,
+                    CampaignType = CampaignTypes.CategoryPercentageDiscountCampaign,
+                    CampaignDetail = $"Kampanya {campaign.StartDate?.ToString("dd.MM.yyyy")} - {campaign.EndDate?.ToString("dd.MM.yyyy")} tarihleri arasında yapılacak alışverişlerde geçerlidir."
+                };
+                campaignDtos.Add(campaignDto);
+            }
+
+            var specialDiscount = _specialDiscountCampaignDal.GetAllDto(g => g.IsActive == true);
+            foreach (var campaign in specialDiscount)
+            {
+                var campaignDto = new CampaignDto
+                {
+                    Id = campaign.Id,
+                    CampaignImageUrl = "",
+                    EndDate = campaign.EndDate,
+                    IsActive = campaign.IsActive,
+                    StartDate = campaign.StartDate,
+                    CampaignType = CampaignTypes.GiftCampaign,
+                    CampaignDetail = $"Kampanya {campaign.StartDate?.ToString("dd.MM.yyyy")} - {campaign.EndDate?.ToString("dd.MM.yyyy")} tarihleri arasında yapılacak alışverişlerde geçerlidir."
+                };
+                campaignDtos.Add(campaignDto);
+            }
+
+            var productPercentageDiscount = _productPercentageDiscountCampaignDal.GetAllDto(g => g.IsActive == true);
+            foreach (var campaign in productPercentageDiscount)
+            {
+                var campaignDto = new CampaignDto
+                {
+                    Id = campaign.Id,
+                    CampaignImageUrl = "",
+                    EndDate = campaign.EndDate,
+                    IsActive = campaign.IsActive,
+                    StartDate = campaign.StartDate,
+                    CampaignType = CampaignTypes.GiftCampaign,
+                    CampaignDetail = $"Kampanya {campaign.StartDate?.ToString("dd.MM.yyyy")} - {campaign.EndDate?.ToString("dd.MM.yyyy")} tarihleri arasında yapılacak alışverişlerde geçerlidir."
+                };
+                campaignDtos.Add(campaignDto);
+            }
+
+            var giftProductCampaign = _giftProductCampaignDal.GetAllDto(g => g.IsActive == true);
+            foreach (var campaign in giftProductCampaign)
+            {
+                var campaignDto = new CampaignDto
+                {
+                    Id = campaign.Id,
+                    CampaignImageUrl = "",
+                    EndDate = campaign.EndDate,
+                    IsActive = campaign.IsActive,
+                    StartDate = campaign.StartDate,
+                    CampaignType = CampaignTypes.GiftCampaign,
+                    CampaignDetail = $"Kampanya {campaign.StartDate?.ToString("dd.MM.yyyy")} - {campaign.EndDate?.ToString("dd.MM.yyyy")} tarihleri arasında yapılacak alışverişlerde geçerlidir."
+                };
+                campaignDtos.Add(campaignDto);
+            }
+
+
+
+            var combinedDiscount = _combinedDiscountCampaignDal.GetAllDto(g => g.IsActive == true);
+            foreach (var campaign in combinedDiscount)
+            {
+                var campaignDto = new CampaignDto
+                {
+                    Id = campaign.Id,
+                    CampaignImageUrl = "",
+                    EndDate = campaign.EndDate,
+                    IsActive = campaign.IsActive,
+                    StartDate = campaign.StartDate,
+                    CampaignType = CampaignTypes.GiftCampaign,
+                    CampaignDetail = $"Kampanya {campaign.StartDate?.ToString("dd.MM.yyyy")} - {campaign.EndDate?.ToString("dd.MM.yyyy")} tarihleri arasında yapılacak alışverişlerde geçerlidir."
+
+                };
+                campaignDtos.Add(campaignDto);
+            }
             return new SuccessDataResult<List<CampaignDto>>(campaignDtos);
         }
 
@@ -141,6 +595,21 @@ namespace Business.Concrate
                     break;
                 case CampaignTypes.SecondDiscountCampaign:
                     campaign = _campaignSecondDiscountDal.Get(x => x.Id == id);
+                    break;
+                case CampaignTypes.ProductPercentageDiscountCampaign:
+                    campaign = _productPercentageDiscountCampaignDal.Get(b => b.Id == id);
+                    break;
+                case CampaignTypes.CategoryPercentageDiscountCampaign:
+                    campaign = _categoryPercentageDiscountCampaignDal.Get(b => b.Id == id);
+                    break;
+                case CampaignTypes.GiftProductCampaign:
+                    campaign = _giftProductCampaignDal.Get(b => b.Id == id);
+                    break;
+                case CampaignTypes.SpecialDiscountCampaign:
+                    campaign = _specialDiscountCampaignDal.Get(b => b.Id == id);
+                    break;
+                case CampaignTypes.CombinedDiscountCampaign:
+                    campaign = _combinedDiscountCampaignDal.Get(b => b.Id == id);
                     break;
                 default:
                     throw new ArgumentException("Invalid campaign type.");
@@ -232,6 +701,22 @@ namespace Business.Concrate
                 }
             }
             return new SuccessDataResult<List<CampaignDto>>(campaignList);
+        }
+
+        public IDataResult<List<ICampaign>> GetAll()
+        {
+            var allCampaigns = new List<ICampaign>();
+            //aç sonradan null ayarı koy 
+            //allCampaigns.AddRange(_campaignProductGroupDal.GetAll());
+          //  allCampaigns.AddRange(_campaignSecondDiscountDal.GetAll());
+            allCampaigns.AddRange(_combinedDiscountCampaignDal.GetAll());
+            allCampaigns.AddRange(_campaignGiftDal.GetAll());
+            allCampaigns.AddRange(_categoryPercentageDiscountCampaignDal.GetAll());
+            allCampaigns.AddRange(_specialDiscountCampaignDal.GetAll());
+            allCampaigns.AddRange(_giftProductCampaignDal.GetAll());
+            allCampaigns.AddRange(_productPercentageDiscountCampaignDal.GetAll());
+
+            return new SuccessDataResult<List<ICampaign>>(allCampaigns);
         }
     }
 }

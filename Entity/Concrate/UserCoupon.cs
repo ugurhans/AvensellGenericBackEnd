@@ -10,6 +10,13 @@ namespace Entity.Concrate
         public int UserId { get; set; }
         public int BasketId { get; set; }
         public DateTime UsageDate { get; set; }
+
+        //string Code { get; set; }
+        //string StartDate { get; set; }
+        //string EndDate { get; set; }
+        //string CouponImageUrl { get; set; }
+        //decimal Discount { get; set; }
+        //string Name { get; set; }
     }
 }
 

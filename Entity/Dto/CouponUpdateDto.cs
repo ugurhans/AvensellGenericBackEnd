@@ -1,10 +1,14 @@
-﻿using System;
-using Core.Entities;
+﻿using Core;
 using Entity.Enum;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Entity.Concrate
+namespace Entity.Dto
 {
-    public class Coupon : IEntity
+    public class CouponUpdateDto:IDto
     {
         public int Id { get; set; }
         public string CouponCode { get; set; }
@@ -16,6 +20,8 @@ namespace Entity.Concrate
         public CouponTypes couponTypes { get; set; }
         public string CouponImageUrl { get; set; }
         public string CouponName { get; set; }
+        public string CombinedProduct { get; set; }
+        public int CategoryId { get; set; }
+
     }
 }
-

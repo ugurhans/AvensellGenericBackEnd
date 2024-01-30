@@ -21,7 +21,7 @@ public class BasketDetailDto : IDto
     public decimal? CampaignDiscount { get; set; }
 
 
-
+    public CouponTypes? couponTypes { get; set; }
     public bool? IsCouponApplied { get; set; }
     public int? CouponId { get; set; }
     public decimal? CouponDiscount { get; set; }
