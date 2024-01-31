@@ -64,16 +64,16 @@ namespace AvenSellWebApi.Controllers
             return BadRequest(result.Message);
         }
 
-        [HttpGet("getcampaignid/{id}")]
-        public IActionResult GetCampaignID(int id)
-        {
-            var result = _campaignService.GetCampaignID(id);
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-            return BadRequest(result.Message);
-        }
+        //[HttpGet("getcampaignid/{id}")]
+        //public IActionResult GetCampaignID(int id)
+        //{
+        //    var result = _campaignService.GetCampaignID(id);
+        //    if (result.Success)
+        //    {
+        //        return Ok(result.Data);
+        //    }
+        //    return BadRequest(result.Message);
+        //}
 
         [HttpPut("update")]
         public IActionResult Update([FromBody] CampaignUpdateDto campaignUpdateDto)

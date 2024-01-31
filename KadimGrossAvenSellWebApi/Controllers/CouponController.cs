@@ -40,27 +40,27 @@ namespace KadimGrossAvenSellWebApi.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("get/CouponType}/{id}")]
-        public IActionResult Get<T>(CouponTypes couponTypes, int id) where T : class, IEntity, new()
-        {
-            var result = _couponService.Get<T>(couponTypes, id);
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-            return BadRequest(result.Message);
-        }
+        //[HttpGet("get/CouponType}/{id}")]
+        //public IActionResult Get<T>(CouponTypes couponTypes, int id) where T : class, IEntity, new()
+        //{
+        //    var result = _couponService.Get<T>(couponTypes, id);
+        //    if (result.Success)
+        //    {
+        //        return Ok(result.Data);
+        //    }
+        //    return BadRequest(result.Message);
+        //}
 
-        [HttpGet("getcouponid/{id}")]
-        public IActionResult GetCouponId(int id)
-        {
-            var result = _couponService.GetCouponId(id);
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-            return BadRequest(result.Message);
-        }
+        //[HttpGet("getcouponid/{id}")]
+        //public IActionResult GetCouponId(int id)
+        //{
+        //    var result = _couponService.GetCouponId(id);
+        //    if (result.Success)
+        //    {
+        //        return Ok(result.Data);
+        //    }
+        //    return BadRequest(result.Message);
+        //}
 
         [HttpPut("update")]
         public IActionResult Update([FromBody] CouponUpdateDto CouponUpdateDto) 
