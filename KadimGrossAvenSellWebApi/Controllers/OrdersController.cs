@@ -5,6 +5,7 @@ using System;
 using Entity.Enum;
 using Entity.Dto;
 using Entity.Concrate.paytr;
+using Core.Utilities.Results;
 
 namespace WebAPI.Controllers
 {
@@ -32,6 +33,21 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpGet("GetbyOrderidBasic/{orderId}")]
+        public IActionResult GetByOrderIdBasic(int orderId)
+        {
+            var result = _orderService.GetByOrderIdBasic(orderId);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.Message); // veya isteğinize uygun bir HTTP durumu
+        }
+
+
 
         [HttpGet("GetById")]
         public IActionResult GetById(int orderId)
@@ -144,7 +160,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("Delete")]
+        [HttpDelete("Delete")]
         public IActionResult Delete(int orderId)
         {
             var result = _orderService.Delete(orderId);
@@ -182,6 +198,18 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpPost("Update")]
+        public IActionResult Update(OrderUpdateDto orderUpdate)
+        {
+            var result = _orderService.Update(orderUpdate);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
 
 
         [HttpGet("GetOrdersWithCount")]

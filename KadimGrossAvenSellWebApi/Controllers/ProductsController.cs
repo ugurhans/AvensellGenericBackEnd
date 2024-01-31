@@ -130,7 +130,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getRandomRecommendations")]
+        [HttpGet("GetRandomRecommendations")]
         public IActionResult GetRandomRecommendations()
         {
             var result = _productService.GetRandomRecommendations();

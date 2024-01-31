@@ -31,6 +31,11 @@ namespace Business.Abstract
         IDataResult<RevenueAndProfitDto> GetCostForMarket();
         IResult OrderComplate(PaytrWebHookDto paytrWebHookDto);//
         Task<IResult> AddPayTr(OrderCreateRequestDto order);
+        IDataResult<List<OrderDto>> GetByOrderId(int orderıd);
+        IDataResult<List<OrderBasicDto>> GetByOrderIdBasic(int orderıd);
+
+        IResult Update(OrderUpdateDto order);
+
     }
 }
 

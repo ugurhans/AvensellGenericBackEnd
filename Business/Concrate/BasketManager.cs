@@ -25,6 +25,7 @@ namespace Business.Concrete
         IBasketDal _basketDal;
         IBasketItemService _basketItemService;
         private IBasketItemDal _basketItemDal;
+        private readonly IOrderDal   _orderdal;
         private readonly ICampaignService _campaignService;
         private readonly ICouponService _CopuonService;
         private readonly IProductDal _productDal;
@@ -34,7 +35,7 @@ namespace Business.Concrete
         private readonly IProductCouponDal _productCouponDal;
         private readonly ICategoryCouponDal _categoryCouponDal;
 
-        public BasketManager(IBasketDal basketDal, IBasketItemService basketItemService, IBasketItemDal basketItemDal, ICampaignService campaignService, IProductDal productDal, ICouponDal couponDal, IUserCouponDal userCouponDal, ICouponService copuonService, ITimedCouponDal timedCouponDal, IProductCouponDal productCouponDal, ICategoryCouponDal categoryCouponDal)
+        public BasketManager(IOrderDal orderDal, IBasketDal basketDal, IBasketItemService basketItemService, IBasketItemDal basketItemDal, ICampaignService campaignService, IProductDal productDal, ICouponDal couponDal, IUserCouponDal userCouponDal, ICouponService copuonService, ITimedCouponDal timedCouponDal, IProductCouponDal productCouponDal, ICategoryCouponDal categoryCouponDal)
         {
             _basketDal = basketDal;
             _basketItemService = basketItemService;
@@ -47,6 +48,7 @@ namespace Business.Concrete
             _TimedCouponDal = timedCouponDal;
             _productCouponDal = productCouponDal;
             _categoryCouponDal = categoryCouponDal;
+            _orderdal = orderDal;
         }
 
       
@@ -143,6 +145,7 @@ namespace Business.Concrete
                     basket.CampaignDiscount = null;
                     basket.CampaignDiscount = null;
                     basket.CampaignId = null;
+                    basket.DeliveryFee = 0;
                     _basketDal.Update(dbBasket);
                     return new SuccessDataResult<BasketSimpleDto>(basket);
                 }
@@ -154,11 +157,15 @@ namespace Business.Concrete
                     BasketItems = basket.BasketItems,
                     CampaignDiscount = result.Data.CampaignDiscount,
                     IsCampaignApplied = result.Data.IsCampaignApplied,
+                    couponTypes = result.Data.couponTypes,
                     TotalBasketDiscount = result.Data.TotalBasketDiscount,
                     TotalBasketPaidPrice = result.Data.TotalBasketPaidPrice,
-                    TotalBasketPrice = result.Data.TotalBasketPrice
+                    TotalBasketPrice = result.Data.TotalBasketPrice,
+                    DeliveryFee = result.Data.DeliveryFee
                 });
             }
+            // _orderService.GetByOrderId(userId);
+          
             return new SuccessDataResult<BasketSimpleDto>(basket);
         }
 

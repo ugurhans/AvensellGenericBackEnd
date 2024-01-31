@@ -16,6 +16,85 @@ namespace DataAccess.Concrate.EntityFramework
 {
     public class EfOrderDal : EfEntityRepositoryBase<Order, AvenSellContext>, IOrderDal
     {
+
+        public List<OrderBasicDto> GetOrderDetailBasic(int orderId)
+        {
+            using (AvenSellContext context = new AvenSellContext())
+            {
+                var result = from o in context.Orders
+                             where o.Id == orderId
+                             join a in context.Addresses
+                                 on o.AddressId equals a.Id
+                             select new OrderBasicDto()
+                             {
+                                 OrderId = o.Id,
+                                 State = o.State,
+                                 OrdersItem = (from oi in context.OrderItems
+                                               where oi.OrderId == o.Id
+                                               select new OrderItemDtoBasic
+                                               {
+                                                 
+                                                   ProductName = oi.ProductName,
+                                                 
+                                               }
+                                     ).ToList(),
+                                 OrderDate = o.OrderDate,
+                                 TotalOrderPaidPrice = o.TotalOrderPaidPrice,
+                             };
+
+                return result.ToList();
+            }
+        }
+
+        public List<OrderDto> GetOrderDetails(int orderId)
+        {
+            using (AvenSellContext context = new AvenSellContext())
+            {
+                var result = from o in context.Orders
+                             where o.Id == orderId 
+                             join a in context.Addresses
+                                 on o.AddressId equals a.Id
+                             select new OrderDto()
+                             {
+                                 OrderId = o.Id,
+                                 UserId = o.UserId,
+                                 AddressId = o.AddressId,
+                                 Address = a,
+                                 State = o.State,
+                                 CallRing = o.CallRing,
+                                 DeliveryType = ((CallRings)o.CallRing).ToString(),
+                                 PaymentType = ((PaymentTypes)o.PaymentType).ToString(),
+                                 CompletedDate = o.CompletedDate,
+                                 ConfirmDate = o.ConfirmDate,
+                                 OrdersItem = (from oi in context.OrderItems
+                                               where oi.OrderId == o.Id
+                                               select new OrderItemDto
+                                               {
+                                                   Id = oi.Id,
+                                                   OrderId = oi.OrderId,
+                                                   ProductId = oi.ProductId,
+                                                   BasketItemId = oi.BasketItemId,
+                                                   TotalPrice = oi.TotalPrice,
+                                                   TotalDiscount = oi.TotalDiscount,
+                                                   TotalPaidPrice = oi.TotalPaidPrice,
+                                                   ProductCount = oi.ProductCount,
+                                                   ProductName = oi.ProductName,
+                                                   ProductPrice = oi.ProductPrice,
+                                                   ProductDiscountPrice = oi.ProductDiscountPrice,
+                                                   ProductPaidPrice = oi.ProductPaidPrice,
+                                                   Image = null
+                                               }
+                                     ).ToList(),
+                                 TotalOrderPrice = o.TotalOrderPrice,
+                                 TotalOrderDiscount = o.TotalOrderDiscount,
+                                 OrderDate = o.OrderDate,
+                                 TotalOrderPaidPrice = o.TotalOrderPaidPrice,
+                                 DeliveryFee = o.DeliveryFee
+                             };
+
+                return result.ToList();
+            }
+        }
         public List<OrderDto> GetOrderDetail(int userId, OrderStates state)
         {
             using (AvenSellContext context = new AvenSellContext())
@@ -377,6 +456,8 @@ namespace DataAccess.Concrate.EntityFramework
                 return result;
             }
         }
+
+        
     }
 }
 

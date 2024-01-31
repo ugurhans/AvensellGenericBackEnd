@@ -11,6 +11,8 @@ namespace DataAccess.Abstract
     public interface IOrderDal : IEntityRepository<Order>
     {
         public List<OrderDto> GetOrderDetail(int userId, OrderStates state);
+        public List<OrderDto> GetOrderDetails(int orderId);
+        public List<OrderBasicDto> GetOrderDetailBasic(int orderId);
         public List<OrderDto> GetAllDto(Expression<Func<OrderDto, bool>> filter = null);
         public OrderDto GetDto(Expression<Func<OrderDto, bool>> filter = null);
         public List<OrderSimpleDto> GetAllDtoSimple(Expression<Func<OrderSimpleDto, bool>> filter = null);

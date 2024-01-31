@@ -25,4 +25,5 @@ public class BasketDetailDto : IDto
     public bool? IsCouponApplied { get; set; }
     public int? CouponId { get; set; }
     public decimal? CouponDiscount { get; set; }
+    public int DeliveryFee { get; set; }
 }

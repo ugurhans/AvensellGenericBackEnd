@@ -84,6 +84,18 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OrderDto>>(_orderDal.GetOrderDetail(userId, state));
         }
 
+        public IDataResult<List<OrderDto>> GetByOrderId(int orderıd)
+        {
+            return new SuccessDataResult<List<OrderDto>>(_orderDal.GetOrderDetails(orderıd));
+        }
+
+  
+       public IDataResult<List<OrderBasicDto>> GetByOrderIdBasic(int orderıd)
+        {
+            return new SuccessDataResult<List<OrderBasicDto>>(_orderDal.GetOrderDetailBasic(orderıd));
+        }
+
+
 
         public IResult RepeatOrder(int orderId)
         {
@@ -605,6 +617,80 @@ namespace Business.Concrete
             return new SuccessDataResult<RevenueAndProfitDto>(_orderDal.GetCostForMarket());
         }
 
+        public  IResult Update(OrderUpdateDto order)
+        {
+
+
+            //  var existingOrder = _orderDal.Get(o => o.Id == order.OrderId);
+            var existingOrder = _orderDal.GetOrderDetails(order.OrderId);
+            // Eğer Order varsa güncelle, yoksa hata ver
+            Console.WriteLine(existingOrder);
+            if (existingOrder != null)
+            {
+                var selectedAddressResult = _addressService.GetSelectedAddress(order.AddressId).Data;
+                var newOrder = new Order()
+                {
+                    Id = order.OrderId,
+                    UserId = order.UserId,
+                    BasketId = order.BasketId,
+                    TotalOrderDiscount = order.TotalOrderDiscount,
+                    TotalOrderPrice = order.TotalOrderPrice,
+                    TotalOrderPaidPrice = order.TotalOrderPaidPrice,
+                    OrderDate = order.OrderDate,
+                    State = order.State,
+                    ConfirmDate = order.ConfirmDate,
+                    CompletedDate = order.CompletedDate,
+                    AddressId = order.AddressId,
+
+                };
+
+
+                order.OrderDate = DateTime.Now;
+                order.State = OrderStates.UNAPPROVED;
+                order.ConfirmDate = null;
+
+
+                var address = _addressService.GetSelectedAddress(order.AddressId).Data;
+                _orderDal.Update(newOrder);
+
+                if (address != null)
+                {
+                    var newContact = new OrderContactInfo()
+                    {
+                        City = address.City,
+                        Header = address.Header,
+                        Desc = address.Desc,
+                        IsActive = address.IsActive,
+                        Country = address.Country,
+                        Latitude = address.Latitude,
+                        Longitude = address.Longitude,
+                        PostalCode = address.PostalCode,
+                        Type = address.Type,
+                        BuildingNo = address.BuildingNo,
+                        ApartmentNo = address.ApartmentNo,
+                        DateCreated = DateTime.Now,
+                        Floor = address.Floor,
+                        Neighborhood = address.Neighborhood,
+                        Phone = address.Phone,
+                        DateModified = null,
+                        AddressesId = address.Id,
+                        UserId = address.UserId,
+                    };
+
+                   // _orderContactInfoDal.Update(newContact);
+                   // order.OrderContactId = newContact.Id;
+                    _orderDal.Update(newOrder);
+
+                }
+            }
+           
+          else 
+            {
+                return new ErrorResult("güncellenemedi.");
+            }
+            return new SuccessResult();
+           
+        }
 
     }
 }
