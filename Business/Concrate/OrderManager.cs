@@ -316,7 +316,7 @@ namespace Business.Concrete
             {
                 var orderItem = new OrderItem
                 {
-                    OrderId = item.Id,
+                    OrderId = newOrder.Id,
                     ProductId = item.ProductId,
                     BasketItemId = item.Id,
                     ProductName = item.Name,
