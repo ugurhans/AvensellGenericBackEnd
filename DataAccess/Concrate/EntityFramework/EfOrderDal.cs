@@ -17,6 +17,7 @@ namespace DataAccess.Concrate.EntityFramework
     public class EfOrderDal : EfEntityRepositoryBase<Order, AvenSellContext>, IOrderDal
     {
 
+
         public List<OrderBasicDto> GetOrderDetailBasic(int orderId)
         {
             using (AvenSellContext context = new AvenSellContext())
