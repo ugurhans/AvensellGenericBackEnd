@@ -22,7 +22,7 @@ jobs:
       run: dotnet build KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj --configuration Release
 
     - name: Project publish
-      run: dotnet publish -c Release KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/WebApi
+      run: dotnet publish -c Release KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi
 
     - name: Deploy to IIS
       run: |
