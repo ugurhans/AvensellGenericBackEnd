@@ -37,7 +37,7 @@ namespace Business.Concrate
             email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
             email.Subject = mailRequest.Subject;
             var builder = new BodyBuilder();
-            StreamReader reader = new StreamReader(path: "C:/Users/Administrator/Desktop/resetPass.html");
+            StreamReader reader = new StreamReader(path: @"C:\Users\Administrator\Desktop\resetPass.html");
 
             string readfile = reader.ReadToEnd();
             string StrContent;
