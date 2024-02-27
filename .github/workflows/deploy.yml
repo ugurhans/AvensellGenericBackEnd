@@ -19,10 +19,10 @@ jobs:
         dotnet-version: '7.0.x'
 
     - name: Build with dotnet
-      run: dotnet build WebApi\WebApi.csproj --configuration Release
+      run: dotnet build KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj --configuration Release
 
     - name: Project publish
-      run: dotnet publish -c Release WebApi\WebApi.csproj -o ${{env.DOTNET_ROOT}}/WebApi
+      run: dotnet publish -c Release KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/WebApi
 
     - name: Deploy to IIS
       run: |
@@ -38,9 +38,9 @@ jobs:
         }
         
         Start-Sleep -s 15        
-        Copy-Item ${{env.DOTNET_ROOT}}/WebApi/* C:\inetpub\wwwroot\sites\kadimGross.site\avensellService -Recurse -Force
+        Copy-Item ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi/* C:\inetpub\wwwroot\sites\kadimGross.site\avensellService -Recurse -Force
         
-        if ((Get-WebSiteState -Name titizBack).Value -eq "Stopped")
+        if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Stopped")
         {
             Start-WebSite -Name kadimGross.site
             echo "Started Website kadimGross.site"
