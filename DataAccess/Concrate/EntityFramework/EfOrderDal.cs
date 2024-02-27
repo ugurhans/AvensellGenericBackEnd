@@ -23,8 +23,8 @@ namespace DataAccess.Concrate.EntityFramework
             {
                 var result = from o in context.Orders
                              where o.Id == orderId
-                             join a in context.Addresses
-                                 on o.AddressId equals a.Id
+                             join a in context.OrderItems
+                                 on o.Id equals a.OrderId
                              select new OrderBasicDto()
                              {
                                  OrderId = o.Id,
