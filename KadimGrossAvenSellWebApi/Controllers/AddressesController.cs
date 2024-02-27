@@ -20,16 +20,16 @@ namespace WebAPI.Controllers
             _addressesService = addressesService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAll(int userId) //bir kullanicinin tum adresleri
-        {
-            var result = _addressesService.GetAll(userId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        //[HttpGet("getall")]
+        //public IActionResult GetAll(int userId) //bir kullanicinin tum adresleri
+        //{
+        //    var result = _addressesService.GetAll(userId);
+        //    if (result.Success)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    return BadRequest(result);
+        //}
 
         [HttpGet("getSelectedAddress")]
         public IActionResult GetSelectedAdress(int addressId)
