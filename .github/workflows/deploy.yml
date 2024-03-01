@@ -37,7 +37,7 @@ jobs:
             echo "Stopped Application Pool kadimGross.site"
         }
         
-        Start-Sleep -s 15        
+        Start-Sleep -s 60        
         Copy-Item ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi/* C:\inetpub\wwwroot\sites\KadimSite\AvenSellService -Recurse -Force
         
         if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Stopped")
