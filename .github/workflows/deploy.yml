@@ -36,9 +36,13 @@ jobs:
             Stop-WebAppPool -Name kadimGross.site
             echo "Stopped Application Pool kadimGross.site"
         }
-        
-        Start-Sleep -s 60        
-        Copy-Item ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi/* C:\inetpub\wwwroot\sites\KadimSite\AvenSellService -Recurse -Force
+        if ((Get-WebSiteState -Name avenSellGenericService).Value -eq "Started")
+        {
+            Start-WebSite -Name avenSellGenericService
+            echo "Started Website kadimGross.site"
+        }
+        Start-Sleep -s 15        
+        Copy-Item ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
         
         if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Stopped")
         {
@@ -50,5 +54,6 @@ jobs:
             Start-WebAppPool -Name kadimGross.site
             echo "Started Application Pool kadimGross.site"
         }
+  
         
         if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
