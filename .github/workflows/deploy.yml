@@ -36,11 +36,6 @@ jobs:
             Stop-WebAppPool -Name kadimGross.site
             echo "Stopped Application Pool kadimGross.site"
         }
-        if ((Get-WebSiteState -Name avenSellGenericService).Value -eq "Started")
-        {
-            Start-WebSite -Name avenSellGenericService
-            echo "Started Website kadimGross.site"
-        }
         Start-Sleep -s 15        
         Copy-Item ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
         
