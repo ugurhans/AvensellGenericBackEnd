@@ -62,7 +62,7 @@ else
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("https://kadimgross.com.tr/avensellservice/swagger/v1/swagger.json", "AvenSellApi v1");
+        c.SwaggerEndpoint("https://kadimgross.com.tr/avenSellGenericService/swagger/v1/swagger.json", "AvenSellApi v1");
     });
 
 
