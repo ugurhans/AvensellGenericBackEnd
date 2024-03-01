@@ -1,5 +1,4 @@
 name: AspNetCoreAPI
-
 on:
   push:
     branches: [ "main" ]
