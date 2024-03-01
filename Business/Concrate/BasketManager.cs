@@ -34,8 +34,9 @@ namespace Business.Concrete
         private readonly ITimedCouponDal _TimedCouponDal;
         private readonly IProductCouponDal _productCouponDal;
         private readonly ICategoryCouponDal _categoryCouponDal;
+        private readonly IShopDal _shopDal;
 
-        public BasketManager(IOrderDal orderDal, IBasketDal basketDal, IBasketItemService basketItemService, IBasketItemDal basketItemDal, ICampaignService campaignService, IProductDal productDal, ICouponDal couponDal, IUserCouponDal userCouponDal, ICouponService copuonService, ITimedCouponDal timedCouponDal, IProductCouponDal productCouponDal, ICategoryCouponDal categoryCouponDal)
+        public BasketManager(IOrderDal orderDal, IBasketDal basketDal, IBasketItemService basketItemService, IBasketItemDal basketItemDal, ICampaignService campaignService, IProductDal productDal, ICouponDal couponDal, IUserCouponDal userCouponDal, ICouponService copuonService, ITimedCouponDal timedCouponDal, IProductCouponDal productCouponDal, ICategoryCouponDal categoryCouponDal, IShopDal shopDal)
         {
             _basketDal = basketDal;
             _basketItemService = basketItemService;
@@ -49,6 +50,7 @@ namespace Business.Concrete
             _productCouponDal = productCouponDal;
             _categoryCouponDal = categoryCouponDal;
             _orderdal = orderDal;
+            _shopDal = shopDal;
         }
 
       
@@ -101,6 +103,10 @@ namespace Business.Concrete
         public IDataResult<BasketSimpleDto> GetSimpleByUserId(int userId)
         {
             var basket = _basketDal.GetSimpleByUserId(userId);
+            var shop = _shopDal.Get(x => x.DeliveryFee != null);
+            decimal deliveryFee = shop?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
+            basket.DeliveryFee = Convert.ToInt32(shop?.DeliveryFee ?? deliveryFee);
+            basket.TotalBasketPaidPrice = basket.TotalBasketPaidPrice + basket.DeliveryFee;
             if (basket.IsCampaignApplied == true && basket.CampaignId != null && basket.CampaignId > 0 && basket.CampaignType != null && basket.CampaignDiscount > 0)
             {
                 IDataResult<BasketDetailDto> result = null;
@@ -160,9 +166,9 @@ namespace Business.Concrete
                     couponTypes = result.Data.couponTypes,
                     TotalBasketDiscount = result.Data.TotalBasketDiscount,
                     TotalBasketPaidPrice = result.Data.TotalBasketPaidPrice,
-                    TotalBasketPrice = result.Data.TotalBasketPrice,
-                    DeliveryFee = result.Data.DeliveryFee
-                });
+                    TotalBasketPrice = result.Data.TotalBasketPrice + Convert.ToInt32(shop?.DeliveryFee ?? deliveryFee),
+                    DeliveryFee = Convert.ToInt32(shop?.DeliveryFee ?? deliveryFee)
+            });
             }
             // _orderService.GetByOrderId(userId);
           
@@ -716,7 +722,7 @@ namespace Business.Concrete
                         {
                             BasketId = BasketDetailDto.BasketId,
                             TotalBasketDiscount = indirimTutari,
-                            TotalBasketPrice = basketamount,
+                            TotalBasketPrice = BasketDetailDto.TotalBasketPrice,
                             TotalBasketPaidPrice = basketamount,
                             BasketItems = BasketDetailDto.BasketItems,
                             CampaignId = campaign.Id,

@@ -18,8 +18,8 @@ namespace Business.Concrate
         private readonly IMarketVariablesDal _marketVariablesDal;
         private readonly IBasketDal _basketDal;
         private readonly IAddressDal _addressDal;
-
-        public BasketBoxesManager(IDeliveryDal deliveryDal, IEmptyDeliveryDal emptyDeliveryDal, IOnlinePaymentDal onlinePaymentDal, IPaymentTypeDal paymentTypeDal, IMarketVariablesDal marketVariablesDal, IBasketDal basketDal,IAddressDal addressDal)
+        private readonly IShopDal _shopdal;
+        public BasketBoxesManager(IDeliveryDal deliveryDal, IEmptyDeliveryDal emptyDeliveryDal, IOnlinePaymentDal onlinePaymentDal, IPaymentTypeDal paymentTypeDal, IMarketVariablesDal marketVariablesDal, IBasketDal basketDal,IAddressDal addressDal, IShopDal shopDal)
         {
             _deliveryDal = deliveryDal;
             _emptyDeliveryDal = emptyDeliveryDal;
@@ -28,13 +28,20 @@ namespace Business.Concrate
             _marketVariablesDal = marketVariablesDal;
             _basketDal = basketDal;
             _addressDal = addressDal;
-
+            _shopdal = shopDal;
 
         }
         //ttizden
+       
+
+
         public decimal GetBasketPrice(int userId)
         {
+            var shop = _shopdal.Get(x => x.DeliveryFee != null);
+            decimal deliveryFee = shop?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
+           
             var basket = _basketDal.GetSimpleByUserId(userId);
+            basket.DeliveryFee = Convert.ToInt32(shop?.DeliveryFee ?? deliveryFee);
 
             if (basket == null)
             {
@@ -45,7 +52,9 @@ namespace Business.Concrate
                 _basketDal.Add(newBasket);
                 return 0;
             }
-            decimal totalBasketPrice = basket.TotalBasketPrice ?? 0;
+            //decimal totalBasketPrice = basket.TotalBasketPrice ?? 0;
+            decimal totalBasketPrice = (basket.TotalBasketPrice+basket.DeliveryFee) ?? 0;
+
             return totalBasketPrice;
         }
 

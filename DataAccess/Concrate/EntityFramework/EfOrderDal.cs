@@ -22,10 +22,14 @@ namespace DataAccess.Concrate.EntityFramework
         {
             using (AvenSellContext context = new AvenSellContext())
             {
+                var deliveryFee = context.Shops
+.OrderBy(s => s.Id) // veya başka bir sütuna göre sıralayın
+.Select(s => s.DeliveryFee)
+.FirstOrDefault();
+
                 var result = from o in context.Orders
                              where o.Id == orderId
-                             join a in context.OrderItems
-                                 on o.Id equals a.OrderId
+                             join a in context.OrderItems on o.Id equals a.OrderId
                              select new OrderBasicDto()
                              {
                                  OrderId = o.Id,
@@ -34,16 +38,14 @@ namespace DataAccess.Concrate.EntityFramework
                                                where oi.OrderId == o.Id
                                                select new OrderItemDtoBasic
                                                {
-                                                 
                                                    ProductName = oi.ProductName,
-                                                 
-                                               }
-                                     ).ToList(),
+                                               }).ToList(),
                                  OrderDate = o.OrderDate,
-                                 TotalOrderPaidPrice = o.TotalOrderPaidPrice,
+                                 TotalOrderPaidPrice = o.TotalOrderPaidPrice + deliveryFee, // deliveryFee kullanarak toplam tutarı güncelle
                              };
 
                 return result.ToList();
+
             }
         }
 
@@ -52,7 +54,7 @@ namespace DataAccess.Concrate.EntityFramework
             using (AvenSellContext context = new AvenSellContext())
             {
                 var result = from o in context.Orders
-                             where o.Id == orderId 
+                             where o.Id == orderId
                              join a in context.Addresses
                                  on o.AddressId equals a.Id
                              select new OrderDto()
@@ -458,7 +460,7 @@ namespace DataAccess.Concrate.EntityFramework
             }
         }
 
-        
+
     }
 }
 

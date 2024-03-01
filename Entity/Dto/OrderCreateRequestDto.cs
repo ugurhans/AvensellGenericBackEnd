@@ -24,8 +24,8 @@ namespace Entity.Dto
 
         public OrderStates? State { get; set; }
         public CallRings? CallRing { get; set; }
-        public decimal? DeliveryFee { get; set; }
-        public string? DeliveryType { get; set; }
+      //  public decimal? DeliveryFee { get; set; }
+        public string MarketName { get; set; } //bu shops tablosundaki name ile aynı olursa oradaki deliveryfee degerini alıyoruz..
 
 
 
@@ -39,7 +39,7 @@ namespace Entity.Dto
         public DateTime? ConfirmDate { get; set; }
         public DateTime? CompletedDate { get; set; }
 
-        public List<OrderItemDto> OrdersItem { get; set; }
+       // public List<OrderItemDto> OrdersItem { get; set; }
 
 
         public DateTime? PaymentApprovedDate { get; set; }// burdan sonra

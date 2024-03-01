@@ -40,6 +40,7 @@ namespace Business.Concrete
         private IBasketItemService _basketItemService;
         IProductService _productService;
         IBasketItemDal _basketItemDal;
+        IShopDal _shopDal;
 
         private readonly IPayTrOrderService _payTrOrderService;
         private readonly IPaytrLogDal _paytrLogDal;
@@ -61,7 +62,7 @@ namespace Business.Concrete
 
 
         public OrderManager(IOrderDal orderDal, IBasketService basketService, IOrderItemService orderItemService,
-               IBasketItemService basketItemService, IProductService productService, IBasketItemDal basketItemDal, IUserService userService, IPayTrOrderService payTrOrderService, IPaytrLogDal paytrLogDal, IHttpContextAccessor httpContextAccessor, IAddressService addressService, IOrderContactInfoDal orderContactInfoDal, IUserDal userDal, IBasketBoxesService basketBoxesService)
+               IBasketItemService basketItemService, IProductService productService, IBasketItemDal basketItemDal, IUserService userService, IPayTrOrderService payTrOrderService, IPaytrLogDal paytrLogDal, IHttpContextAccessor httpContextAccessor, IAddressService addressService, IOrderContactInfoDal orderContactInfoDal, IUserDal userDal, IBasketBoxesService basketBoxesService, IShopDal shopDal)
 
         {
             _orderDal = orderDal;
@@ -77,6 +78,7 @@ namespace Business.Concrete
             _orderContactInfoDal = orderContactInfoDal;
             _userDal = userDal;
             _basketBoxesService = basketBoxesService;
+            _shopDal = shopDal;
         }
 
         public IDataResult<List<OrderDto>> GetAllDto(int userId, OrderStates state)
@@ -99,8 +101,10 @@ namespace Business.Concrete
 
         public IResult RepeatOrder(int orderId)
         {
+            var shop = _shopDal.Get(x => x.DeliveryFee != null);
+            decimal deliveryFee = shop?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
             var order = _orderDal.Get(o => o.Id == orderId);
-            order.DeliveryFee = 20;
+            order.DeliveryFee = Convert.ToInt32(shop?.DeliveryFee ?? deliveryFee);
             order.OrderItems = _orderItemService.GetAllWithOrderId(order.Id).Data;
             if (order.OrderItems != null)
             {
@@ -218,13 +222,15 @@ namespace Business.Concrete
             var basket = _basketService.GetDetailByBasketId(order.BasketId).Data;
             var priceLast = _basketBoxesService.GetBasketPrice(basket.UserId.Value);
             var selectedAddressResult = _addressService.GetSelectedAddress(order.AddressId).Data;
+            var shop = _shopDal.Get(x => x.Name == order.MarketName && x.DeliveryFee != null);
+            decimal deliveryFee = shop?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
             var newOrder = new Order()
             {
                 UserId = order.UserId,
                 BasketId=order.BasketId,
                 TotalOrderDiscount = order.TotalOrderDiscount,
                 TotalOrderPrice = order.TotalOrderPrice,
-                TotalOrderPaidPrice = order.TotalOrderPaidPrice,
+                TotalOrderPaidPrice = order.TotalOrderPaidPrice+ (shop?.DeliveryFee ?? deliveryFee),
                 OrderDate = order.OrderDate,
                 State = order.State,
                 ConfirmDate = order.ConfirmDate, 
@@ -235,6 +241,7 @@ namespace Business.Concrete
                 CampaignId = order.CampaignId,
                 CampaignDiscount = order.CampaignDiscount,
                 AddressId = order.AddressId,
+                DeliveryFee = (shop?.DeliveryFee ?? deliveryFee)
 
             };
          
@@ -253,6 +260,21 @@ namespace Business.Concrete
                     case CampaignTypes.SecondDiscountCampaign:
                         campaignResult = _basketService.ApplySecondDiscountCampaign((int)basket.CampaignId, basket.BasketId);
                         break;
+                    case CampaignTypes.SpecialDiscountCampaign:
+                        campaignResult = _basketService.ApplySpecialDiscountCampaign((int)basket.CampaignId, basket.BasketId);
+                        break;
+                    case CampaignTypes.GiftProductCampaign:
+                        campaignResult = _basketService.ApplyGiftProductCampaign((int)basket.CampaignId, basket.BasketId);
+                        break;
+                    case CampaignTypes.CombinedDiscountCampaign:
+                        campaignResult = _basketService.ApplyCombinedDiscountCampaign((int)basket.CampaignId, basket.BasketId);
+                        break;
+                    case CampaignTypes.CategoryPercentageDiscountCampaign:
+                        campaignResult = _basketService.ApplyCategoryPercentageDiscountCampaign((int)basket.CampaignId, basket.BasketId);
+                        break;
+                    case CampaignTypes.ProductPercentageDiscountCampaign:
+                        campaignResult = _basketService.ApplyProductPercentageDiscountCampaign((int)basket.CampaignId, basket.BasketId);
+                        break;
                     default:
                         campaignResult = new ErrorDataResult<BasketDetailDto>("Kampanya Uygulanırken Sorun Yaşandı.");
                         break;
@@ -268,12 +290,13 @@ namespace Business.Concrete
                     order.CampaignType = basket.CampaignType;
                 }
             }
+
+           
             order.OrderDate = DateTime.Now;
             order.State = OrderStates.UNAPPROVED;
-            order.DeliveryFee = 20;
             order.TotalOrderDiscount = basket.TotalBasketDiscount;
             order.TotalOrderPrice = basket.TotalBasketPrice;
-            order.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + order.DeliveryFee;
+            order.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (shop?.DeliveryFee ?? deliveryFee);
             order.ConfirmDate = null;
 
 

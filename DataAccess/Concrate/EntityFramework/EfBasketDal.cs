@@ -198,7 +198,7 @@ namespace DataAccess.Concrete.EntityFramework
                      }).ToList(),
                      TotalBasketPrice = b.BasketItems.Sum(bi => bi.Product.UnitPrice * bi.ProductCount),
                      TotalBasketDiscount = b.BasketItems.Sum(bi => bi.Product.Discount * bi.ProductCount),
-                     TotalBasketPaidPrice = b.BasketItems.Sum(bi => (decimal)((bi.Product.UnitPrice - bi.Product.Discount) * bi.ProductCount)),
+                     TotalBasketPaidPrice = b.BasketItems.Sum(bi => (decimal)((bi.Product.UnitPrice - bi.Product.Discount) * bi.ProductCount))+0,
                      CampaignId = b.CampaignId,
                      CampaignType = b.CampaignType,
                      IsCampaignApplied = b.IsCampaignApplied,
@@ -206,7 +206,10 @@ namespace DataAccess.Concrete.EntityFramework
                      CouponId = b.CouponId,
                      CouponDiscount = b.CouponDiscount,
                      IsCouponApplied = b.IsCouponApplied,
-                     UserId = b.UserId
+                     UserId = b.UserId,
+                     DeliveryFee=0
+                     
+
                  })
                  .FirstOrDefault();
 

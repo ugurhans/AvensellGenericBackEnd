@@ -3,16 +3,15 @@ namespace Entity.Enum
 {
     public enum CampaignTypes
     {
-        GiftCampaign = 1, 
-        ProductGroupCampaign = 2,
-        SecondDiscountCampaign = 3,
-        CombinedDiscountCampaign = 4,
-        GiftProductCampaign = 5,
-        SpecialDiscountCampaign = 6,
-        CategoryPercentageDiscountCampaign = 7,
-        ProductPercentageDiscountCampaign = 8
+        GiftCampaign = 1,
+        CombinedDiscountCampaign = 2,
+        GiftProductCampaign = 3,
+        SpecialDiscountCampaign = 4,
+        CategoryPercentageDiscountCampaign = 5,
+        ProductPercentageDiscountCampaign = 6,
 
-
+        ProductGroupCampaign = 7,
+        SecondDiscountCampaign = 8
     }
 }
 
