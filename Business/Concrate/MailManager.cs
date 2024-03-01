@@ -32,39 +32,48 @@ namespace Business.Concrate
 
         public async Task<IResult> SendLostEmailAsync(MailRequest mailRequest)
         {
-            var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
-            email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
-            email.Subject = mailRequest.Subject;
-            var builder = new BodyBuilder();
-            StreamReader reader = new StreamReader(path: @"C:\\Users\Administrator\Desktop\resetPass.html");
-
-            string readfile = reader.ReadToEnd();
-            string StrContent;
-
-            StrContent = readfile;
-            var user = _userService.GetByMail(mailRequest.ToEmail);
-            if (user != null)
+            try
             {
-                Random random = new Random();
-                user.LostPin = random.Next(1000, 99999).ToString();
-                _userService.Update(user);
-                StrContent = StrContent.Replace("##PINNUMBER##", user.LostPin);
+                var email = new MimeMessage();
+                email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+                email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+                email.Subject = mailRequest.Subject;
+                var builder = new BodyBuilder();
+                StreamReader reader = new StreamReader(path: @"C:\\Users\Administrator\Desktop\resetPass.html");
 
-                builder.HtmlBody = StrContent;
-                builder.TextBody = mailRequest.Body;
+                string readfile = reader.ReadToEnd();
+                string StrContent;
 
-                email.Body = builder.ToMessageBody();
+                StrContent = readfile;
+                var user = _userService.GetByMail(mailRequest.ToEmail);
+                if (user != null)
+                {
+                    Random random = new Random();
+                    user.LostPin = random.Next(1000, 99999).ToString();
+                    _userService.Update(user);
+                    StrContent = StrContent.Replace("##PINNUMBER##", user.LostPin);
 
-                builder.HtmlBody = StrContent;
-                using var smtp = new SmtpClient();
-                smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
-                await smtp.SendAsync(email);
-                smtp.Disconnect(true);
+                    builder.HtmlBody = StrContent;
+                    builder.TextBody = mailRequest.Body;
+
+                    email.Body = builder.ToMessageBody();
+
+                    builder.HtmlBody = StrContent;
+                    using var smtp = new SmtpClient();
+                    smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+                    smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+                    await smtp.SendAsync(email);
+                    smtp.Disconnect(true);
+                }
+
+                return new SuccessResult("Mail Başarıyla Gönderildi.");
             }
+            catch (Exception e)
+            {
 
-            return new SuccessResult("Mail Başarıyla Gönderildi.");
+                return new ErrorResult(message: e.Message);
+            }
+            
         }
 
         public async Task<IResult> SendResetEmailAsync(MailRequest mailRequest)
