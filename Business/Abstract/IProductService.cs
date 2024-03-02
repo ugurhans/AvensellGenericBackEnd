@@ -29,7 +29,7 @@ namespace Business.Abstract
         IDataResult<List<UserFavoriteDto>> GetAllByCategoryIdForUser(int categoryId, int userId);
         IResult ReOrder(int from, int to, int productId);
         IDataResult<List<ProductSimpleDto>> GetAllCampaignProducts(int productCount);
-        IDataResult<List<ProductSimpleDto>> GetAllRecommendedFiveProducts(int basketId);
-        IDataResult<List<ProductSimpleDto>> GetRandomRecommendations();
+        IDataResult<List<ProductSimpleDto>> GetAllRecommendedSixProducts(int basketId,int ProductCount);
+        IDataResult<List<ProductSimpleDto>> GetRandomRecommendations(int ProductCount);
     }
 }

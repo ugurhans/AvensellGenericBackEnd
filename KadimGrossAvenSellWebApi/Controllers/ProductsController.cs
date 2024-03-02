@@ -130,21 +130,21 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetRandomRecommendations")]
-        public IActionResult GetRandomRecommendations()
+        [HttpPost("GetRandomRecommendations")]
+        public IActionResult GetRandomRecommendations(int ProductCount)
         {
-            var result = _productService.GetRandomRecommendations();
+            var result = _productService.GetRandomRecommendations(ProductCount);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
-            return BadRequest(result.Message);
+            return BadRequest(result);
         }
 
-        [HttpGet("GetAllRecommendedFiveProducts")]
-        public IActionResult GetAllRecommendedFiveProducts(int basketId)
+        [HttpGet("GetAllRecommendedSixProducts")]
+        public IActionResult GetAllRecommendedSixProducts(int basketId,int ProductCount)
         {
-            var result = _productService.GetAllRecommendedFiveProducts(basketId);
+            var result = _productService.GetAllRecommendedSixProducts(basketId, ProductCount);
             if (result.Success)
             {
                 return Ok(result);

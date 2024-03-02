@@ -14,6 +14,7 @@ using Entity.Concrate;
 using Entity.Dto;
 using Entity.Result;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Business.Concrete
 {
@@ -238,33 +239,59 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<ProductSimpleDto>>(products);
         }
-        public IDataResult<List<ProductSimpleDto>> GetRandomRecommendations()
+        public IDataResult<List<ProductSimpleDto>> GetRandomRecommendations(int ProductCount)
         {
             // Tüm ürünleri al
             var allProducts = _productDal.GetAll();
 
             // Ürünleri karıştır
             var shuffledProducts = ShuffleList(allProducts);
+            if (ProductCount == 0) 
+            { 
+                int number = 6;
+                var recommendedProducts = shuffledProducts.Take(number)
+                                              .Select(product => new ProductSimpleDto
+                                              {
+                                                  Id = product.Id,
+                                                  Name = product.Name,
+                                                  UnitPrice = product.UnitPrice,
+                                                  Discount = product.Discount,
+                                                  OrderBy = product.OrderBy,
+                                                  UnitType = product.UnitType,
+                                                  UnitQuantity = product.UnitQuantity,
+                                                  UnitCount = product.UnitCount,
+                                                  ImageUrl = product.ImageUrl,
+                                                  PaidPrice = product.UnitPrice - product.Discount,
+                                                  BrandName = product.Brand?.Name
+                                              })
+                                              .ToList();
 
+                return new SuccessDataResult<List<ProductSimpleDto>>(recommendedProducts);
+            }
+            else 
+            {
+                int number = ProductCount;
+                var recommendedProducts = shuffledProducts.Take(number)
+                                              .Select(product => new ProductSimpleDto
+                                              {
+                                                  Id = product.Id,
+                                                  Name = product.Name,
+                                                  UnitPrice = product.UnitPrice,
+                                                  Discount = product.Discount,
+                                                  OrderBy = product.OrderBy,
+                                                  UnitType = product.UnitType,
+                                                  UnitQuantity = product.UnitQuantity,
+                                                  UnitCount = product.UnitCount,
+                                                  ImageUrl = product.ImageUrl,
+                                                  PaidPrice = product.UnitPrice - product.Discount,
+                                                  BrandName = product.Brand?.Name
+                                              })
+                                              .ToList();
+
+                return new SuccessDataResult<List<ProductSimpleDto>>(recommendedProducts);
+            }
             // İlk 5 ürünü seç
-            var recommendedProducts = shuffledProducts.Take(5)
-                                               .Select(product => new ProductSimpleDto
-                                               {
-                                                   Id = product.Id,
-                                                   Name = product.Name,
-                                                   UnitPrice = product.UnitPrice,
-                                                   Discount = product.Discount,
-                                                   OrderBy = product.OrderBy,
-                                                   UnitType = product.UnitType,
-                                                   UnitQuantity = product.UnitQuantity,
-                                                   UnitCount = product.UnitCount,
-                                                   ImageUrl = product.ImageUrl,
-                                                   PaidPrice = product.UnitPrice - product.Discount,
-                                                   BrandName = product.Brand?.Name
-                                               })
-                                               .ToList();
-
-            return new SuccessDataResult<List<ProductSimpleDto>>(recommendedProducts);
+           
         }
 
         // Listeyi karıştırmak için yardımcı metod
@@ -282,7 +309,7 @@ namespace Business.Concrete
             }
             return inputList;
         }
-        public IDataResult<List<ProductSimpleDto>> GetAllRecommendedFiveProducts(int basketId)
+        public IDataResult<List<ProductSimpleDto>> GetAllRecommendedSixProducts(int basketId, int ProductCount)
         {
             var basket = _basketItemDal.GetAll(x => x.BasketId == basketId);
 
@@ -333,10 +360,22 @@ namespace Business.Concrete
                     }
                 }
 
-                // Eğer 5 farklı ürün elde edilemediyse, eksik olan ürünleri rastgele seç
-                if (recommendedItems.Count < 5)
+                int number;
+
+                if (ProductCount == 0)
                 {
-                    var remainingProductCount = 5 - recommendedItems.Count;
+                    number = 6;
+                }
+                else
+                {
+                    number = ProductCount;
+                }
+
+
+                // Eğer 6 farklı ürün elde edilemediyse, eksik olan ürünleri rastgele seç
+                if (recommendedItems.Count < number)
+                {
+                    var remainingProductCount = number - recommendedItems.Count;
                     // var remainingProducts = _productDal.GetAll(x => !recommendedItems.Any(r => r.Id == x.Id)).OrderBy(x => Guid.NewGuid()).Take(remainingProductCount).ToList();
                     var recommendedIds = recommendedItems.Select(recommended => recommended.Id).ToList();
 
