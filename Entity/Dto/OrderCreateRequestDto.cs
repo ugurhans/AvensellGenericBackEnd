@@ -25,7 +25,7 @@ namespace Entity.Dto
         public OrderStates? State { get; set; }
         public CallRings? CallRing { get; set; }
       //  public decimal? DeliveryFee { get; set; }
-        public string MarketName { get; set; } //bu shops tablosundaki name ile aynı olursa oradaki deliveryfee degerini alıyoruz..
+        public int MarketId { get; set; } //bu marketsetting tablosundaki market id ile aynı olursa oradaki deliveryfee degerini alıyoruz.. 
 
 
 

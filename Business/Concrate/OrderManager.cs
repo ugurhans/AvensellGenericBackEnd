@@ -40,7 +40,8 @@ namespace Business.Concrete
         private IBasketItemService _basketItemService;
         IProductService _productService;
         IBasketItemDal _basketItemDal;
-        IShopDal _shopDal;
+        //IShopDal _shopDal;
+        IMarketSettingDal _marketSettingDal;
 
         private readonly IPayTrOrderService _payTrOrderService;
         private readonly IPaytrLogDal _paytrLogDal;
@@ -62,7 +63,7 @@ namespace Business.Concrete
 
 
         public OrderManager(IOrderDal orderDal, IBasketService basketService, IOrderItemService orderItemService,
-               IBasketItemService basketItemService, IProductService productService, IBasketItemDal basketItemDal, IUserService userService, IPayTrOrderService payTrOrderService, IPaytrLogDal paytrLogDal, IHttpContextAccessor httpContextAccessor, IAddressService addressService, IOrderContactInfoDal orderContactInfoDal, IUserDal userDal, IBasketBoxesService basketBoxesService, IShopDal shopDal)
+               IBasketItemService basketItemService, IProductService productService, IBasketItemDal basketItemDal, IUserService userService, IPayTrOrderService payTrOrderService, IPaytrLogDal paytrLogDal, IHttpContextAccessor httpContextAccessor, IAddressService addressService, IOrderContactInfoDal orderContactInfoDal, IUserDal userDal, IBasketBoxesService basketBoxesService, IMarketSettingDal marketSettingDal)
 
         {
             _orderDal = orderDal;
@@ -78,7 +79,7 @@ namespace Business.Concrete
             _orderContactInfoDal = orderContactInfoDal;
             _userDal = userDal;
             _basketBoxesService = basketBoxesService;
-            _shopDal = shopDal;
+            _marketSettingDal = marketSettingDal;
         }
 
         public IDataResult<List<OrderDto>> GetAllDto(int userId, OrderStates state)
@@ -101,10 +102,10 @@ namespace Business.Concrete
 
         public IResult RepeatOrder(int orderId)
         {
-            var shop = _shopDal.Get(x => x.DeliveryFee != null);
-            decimal deliveryFee = shop?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
+            var marketSetting = _marketSettingDal.Get(x => x.DeliveryFee != null);
+            decimal deliveryFee = marketSetting?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
             var order = _orderDal.Get(o => o.Id == orderId);
-            order.DeliveryFee = Convert.ToInt32(shop?.DeliveryFee ?? deliveryFee);
+            order.DeliveryFee = Convert.ToInt32(marketSetting?.DeliveryFee ?? deliveryFee);
             order.OrderItems = _orderItemService.GetAllWithOrderId(order.Id).Data;
             if (order.OrderItems != null)
             {
@@ -222,15 +223,15 @@ namespace Business.Concrete
             var basket = _basketService.GetDetailByBasketId(order.BasketId).Data;
             var priceLast = _basketBoxesService.GetBasketPrice(basket.UserId.Value);
             var selectedAddressResult = _addressService.GetSelectedAddress(order.AddressId).Data;
-            var shop = _shopDal.Get(x => x.Name == order.MarketName && x.DeliveryFee != null);
-            decimal deliveryFee = shop?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
+            var marketSetting = _marketSettingDal.Get(x => x.Id == order.MarketId && x.DeliveryFee != null);
+            decimal deliveryFee = marketSetting?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
             var newOrder = new Order()
             {
                 UserId = order.UserId,
                 BasketId=order.BasketId,
                 TotalOrderDiscount = order.TotalOrderDiscount,
                 TotalOrderPrice = order.TotalOrderPrice,
-                TotalOrderPaidPrice = order.TotalOrderPaidPrice+ (shop?.DeliveryFee ?? deliveryFee),
+                TotalOrderPaidPrice = order.TotalOrderPaidPrice+ (marketSetting?.DeliveryFee ?? deliveryFee),
                 OrderDate = order.OrderDate,
                 State = order.State,
                 ConfirmDate = order.ConfirmDate, 
@@ -241,7 +242,7 @@ namespace Business.Concrete
                 CampaignId = order.CampaignId,
                 CampaignDiscount = order.CampaignDiscount,
                 AddressId = order.AddressId,
-                DeliveryFee = (shop?.DeliveryFee ?? deliveryFee)
+                DeliveryFee = (marketSetting?.DeliveryFee ?? deliveryFee)
 
             };
          
@@ -296,7 +297,7 @@ namespace Business.Concrete
             order.State = OrderStates.UNAPPROVED;
             order.TotalOrderDiscount = basket.TotalBasketDiscount;
             order.TotalOrderPrice = basket.TotalBasketPrice;
-            order.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (shop?.DeliveryFee ?? deliveryFee);
+            order.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (marketSetting?.DeliveryFee ?? deliveryFee);
             order.ConfirmDate = null;
 
 

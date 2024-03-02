@@ -18,8 +18,9 @@ namespace Business.Concrate
         private readonly IMarketVariablesDal _marketVariablesDal;
         private readonly IBasketDal _basketDal;
         private readonly IAddressDal _addressDal;
-        private readonly IShopDal _shopdal;
-        public BasketBoxesManager(IDeliveryDal deliveryDal, IEmptyDeliveryDal emptyDeliveryDal, IOnlinePaymentDal onlinePaymentDal, IPaymentTypeDal paymentTypeDal, IMarketVariablesDal marketVariablesDal, IBasketDal basketDal,IAddressDal addressDal, IShopDal shopDal)
+       // private readonly IShopDal _shopdal;
+       private readonly IMarketSettingDal _marketSettingDal;
+        public BasketBoxesManager(IDeliveryDal deliveryDal, IEmptyDeliveryDal emptyDeliveryDal, IOnlinePaymentDal onlinePaymentDal, IPaymentTypeDal paymentTypeDal, IMarketVariablesDal marketVariablesDal, IBasketDal basketDal,IAddressDal addressDal, IMarketSettingDal marketSettingDal)
         {
             _deliveryDal = deliveryDal;
             _emptyDeliveryDal = emptyDeliveryDal;
@@ -28,7 +29,7 @@ namespace Business.Concrate
             _marketVariablesDal = marketVariablesDal;
             _basketDal = basketDal;
             _addressDal = addressDal;
-            _shopdal = shopDal;
+            _marketSettingDal = marketSettingDal;
 
         }
         //ttizden
@@ -37,11 +38,11 @@ namespace Business.Concrate
 
         public decimal GetBasketPrice(int userId)
         {
-            var shop = _shopdal.Get(x => x.DeliveryFee != null);
-            decimal deliveryFee = shop?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
+            var marketsetting = _marketSettingDal.Get(x => x.DeliveryFee != null);
+            decimal deliveryFee = marketsetting?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
            
             var basket = _basketDal.GetSimpleByUserId(userId);
-            basket.DeliveryFee = Convert.ToInt32(shop?.DeliveryFee ?? deliveryFee);
+            basket.DeliveryFee = Convert.ToInt32(marketsetting?.DeliveryFee ?? deliveryFee);
 
             if (basket == null)
             {

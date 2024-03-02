@@ -84,6 +84,8 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Thema> Themas { get; set; }
 
+        public DbSet<MarketSetting> MarketSettings { get; set; }
+
 
     }
 }
