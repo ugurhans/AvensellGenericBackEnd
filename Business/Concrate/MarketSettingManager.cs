@@ -15,38 +15,84 @@ namespace Business.Concrate
     public class MarketSettingManager : IMarketSettingService
     {
         private readonly IMarketSettingDal _marketSettingDal;
+        private readonly IMarketSettingItemDal _marketSettingItemDal;
 
-        public MarketSettingManager(IMarketSettingDal marketSettingDal)
+        public MarketSettingManager(IMarketSettingDal marketSettingDal, IMarketSettingItemDal marketSettingItemDal)
         {
             _marketSettingDal = marketSettingDal;
+            _marketSettingItemDal = marketSettingItemDal;
         }
 
         public IResult Add(MarketSetting marketSetting)
         {
-            _marketSettingDal.Add(marketSetting);
-            return new SuccessResult(Messages.Added);
-        }
+            try
+            {
+                if (marketSetting.DeliveryandPaymentOptions != null && marketSetting.DeliveryandPaymentOptions.Any())
+                {
+                    foreach (var item in marketSetting.DeliveryandPaymentOptions)
+                    {
+                        _marketSettingItemDal.Add(item);
+                    }
+                }
 
-        public IResult Delete(int id)
-        {
-            _marketSettingDal.Delete(id);
-            return new SuccessResult(Messages.Deleted);
+                _marketSettingDal.Add(marketSetting);
+
+                return new SuccessResult(Messages.Added);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult($"Error occurred while adding market setting: {ex.Message}");
+            }
         }
 
         public IDataResult<MarketSetting> GetById(int id)
         {
-            return new SuccessDataResult<MarketSetting>(_marketSettingDal.Get(b => b.Id == id));
+            return _marketSettingDal.GetMarketSetting(id);
         }
 
         public IDataResult<List<MarketSetting>> GetAll()
         {
-            return new SuccessDataResult<List<MarketSetting>>(_marketSettingDal.GetAll());
+            return new SuccessDataResult<List<MarketSetting>>(_marketSettingDal.GetAllMarketSetting());
         }
+
+        public IResult Delete(int id)
+        {
+            try
+            {
+                _marketSettingItemDal.Delete(id);
+
+                _marketSettingDal.Delete(id);
+
+                return new SuccessResult(Messages.Deleted);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult($"Error occurred while deleting market setting: {ex.Message}");
+            }
+        }
+
 
         public IResult Update(MarketSetting marketSetting)
         {
-            _marketSettingDal.Update(marketSetting);
-            return new SuccessResult(Messages.Updated);
+            try
+            {
+                if (marketSetting.DeliveryandPaymentOptions != null && marketSetting.DeliveryandPaymentOptions.Any())
+                {
+                    foreach (var item in marketSetting.DeliveryandPaymentOptions)
+                    {
+                        _marketSettingItemDal.Update(item);
+                    }
+                }
+
+                _marketSettingDal.Update(marketSetting);
+
+                return new SuccessResult(Messages.Updated);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult($"Error occurred while updating market setting: {ex.Message}");
+            }
         }
+
     }
 }

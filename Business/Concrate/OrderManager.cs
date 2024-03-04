@@ -93,9 +93,9 @@ namespace Business.Concrete
         }
 
   
-       public IDataResult<List<OrderBasicDto>> GetByOrderIdBasic(int orderıd)
+       public IDataResult<List<OrderBasicDto>> GetByOrderIdBasic(int UserId)
         {
-            return new SuccessDataResult<List<OrderBasicDto>>(_orderDal.GetOrderDetailBasic(orderıd));
+            return new SuccessDataResult<List<OrderBasicDto>>(_orderDal.GetOrderDetailBasic(UserId));
         }
 
 

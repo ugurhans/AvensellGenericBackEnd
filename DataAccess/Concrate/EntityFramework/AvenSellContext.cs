@@ -12,6 +12,7 @@ using static Azure.Core.HttpHeader;
 using Entity.Dto;
 using Entity.Concrate.paytr;
 using DataAccess.Concrate.EntityFramework;
+using Entity.Enum;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -85,6 +86,8 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Thema> Themas { get; set; }
 
         public DbSet<MarketSetting> MarketSettings { get; set; }
+
+        public DbSet<MarketSettingItem> marketSettingItems { get; set; }
 
 
     }

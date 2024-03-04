@@ -1,8 +1,10 @@
 ﻿using Core.Entities;
+using Entity.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Transactions;
 
@@ -10,6 +12,7 @@ namespace Entity.Concrate
 {
     public class MarketSetting: IEntity
     {
+
         public int Id { get; set; }
         public string? MarketName { get; set; }
         public string? Phone { get; set; }
@@ -23,8 +26,7 @@ namespace Entity.Concrate
         public decimal? DeliveryFee { get; set; }
         public bool? CouponEnabled { get; set; }
         public bool? CampaignEnabled { get; set; }
-        public string? DeliveryOptions { get; set; }
-        public string? PaymentOptions { get; set; }
+        public List<MarketSettingItem>? DeliveryandPaymentOptions { get; set; } // Liste olarak tanımlandı
         public string? PrimaryText { get; set; }
         public string? Secondary { get; set; }
         public string? Text { get; set; }
@@ -32,5 +34,17 @@ namespace Entity.Concrate
         public string? Error { get; set; }
         public string? Warning { get; set; }
 
+    }
+
+    public class MarketSettingItem : IEntity
+    {
+        //[JsonIgnore]
+        public int Id { get; set; }
+        public bool CashOnDelivery { get; set; }
+        public bool CreditCardOnDelivery { get; set; }
+        public bool OnlinePayment { get; set; }
+        public bool Ring { get; set; }
+        public bool Door { get; set; }
+        public bool Pickup { get; set; }
     }
 }

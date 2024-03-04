@@ -18,7 +18,7 @@ namespace DataAccess.Concrate.EntityFramework
     {
 
 
-        public List<OrderBasicDto> GetOrderDetailBasic(int orderId)
+        public List<OrderBasicDto> GetOrderDetailBasic(int UserId)
         {
             using (AvenSellContext context = new AvenSellContext())
             {
@@ -28,7 +28,7 @@ namespace DataAccess.Concrate.EntityFramework
 .FirstOrDefault();
 
                 var result = from o in context.Orders
-                             where o.Id == orderId
+                             where o.UserId == UserId
                              join a in context.OrderItems on o.Id equals a.OrderId
                              select new OrderBasicDto()
                              {

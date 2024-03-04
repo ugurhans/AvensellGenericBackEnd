@@ -137,6 +137,8 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<MarketSettingManager>().As<IMarketSettingService>().SingleInstance();
             builder.RegisterType<EfMarketSettingDal>().As<IMarketSettingDal>().SingleInstance();
 
+            builder.RegisterType<EfMarketSettingItemDal>().As<IMarketSettingItemDal>().SingleInstance();
+
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();

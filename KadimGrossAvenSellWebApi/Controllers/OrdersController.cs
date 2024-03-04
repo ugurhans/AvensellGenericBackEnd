@@ -34,10 +34,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetbyOrderidBasic/{orderId}")]
-        public IActionResult GetByOrderIdBasic(int orderId)
+        [HttpGet("GetbyOrderidBasic/{UserId}")]
+        public IActionResult GetByOrderIdBasic(int UserId)
         {
-            var result = _orderService.GetByOrderIdBasic(orderId);
+            var result = _orderService.GetByOrderIdBasic(UserId);
 
             if (result.Success)
             {
