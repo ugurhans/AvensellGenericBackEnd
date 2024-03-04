@@ -17,6 +17,7 @@ using Entity.Concrate.paytr;
 using Entity.Abtract;
 using static Azure.Core.HttpHeader;
 using System.Runtime.CompilerServices;
+using Entity.Request;
 
 namespace Business.Concrete
 {
@@ -25,7 +26,7 @@ namespace Business.Concrete
         IBasketDal _basketDal;
         IBasketItemService _basketItemService;
         private IBasketItemDal _basketItemDal;
-        private readonly IOrderDal   _orderdal;
+        private readonly IOrderDal _orderdal;
         private readonly ICampaignService _campaignService;
         private readonly ICouponService _CopuonService;
         private readonly IProductDal _productDal;
@@ -34,8 +35,8 @@ namespace Business.Concrete
         private readonly ITimedCouponDal _TimedCouponDal;
         private readonly IProductCouponDal _productCouponDal;
         private readonly ICategoryCouponDal _categoryCouponDal;
-       // private readonly IShopDal _shopDal;
-       private readonly IMarketSettingDal _marketSettingDal;
+        // private readonly IShopDal _shopDal;
+        private readonly IMarketSettingDal _marketSettingDal;
 
         public BasketManager(IOrderDal orderDal, IBasketDal basketDal, IBasketItemService basketItemService, IBasketItemDal basketItemDal, ICampaignService campaignService, IProductDal productDal, ICouponDal couponDal, IUserCouponDal userCouponDal, ICouponService copuonService, ITimedCouponDal timedCouponDal, IProductCouponDal productCouponDal, ICategoryCouponDal categoryCouponDal, IMarketSettingDal marketSettingDal)
         {
@@ -54,7 +55,7 @@ namespace Business.Concrete
             _marketSettingDal = marketSettingDal;
         }
 
-      
+
         public IDataResult<BasketDetailDto> GetDetailByUserId(int userId)
         {
             var basket = _basketDal.GetBasketWithUserId(userId);
@@ -169,15 +170,15 @@ namespace Business.Concrete
                     TotalBasketPaidPrice = result.Data.TotalBasketPaidPrice,
                     TotalBasketPrice = result.Data.TotalBasketPrice + Convert.ToInt32(marketsetting?.DeliveryFee ?? deliveryFee),
                     DeliveryFee = Convert.ToInt32(marketsetting?.DeliveryFee ?? deliveryFee)
-            });
+                });
             }
             // _orderService.GetByOrderId(userId);
-          
+
             return new SuccessDataResult<BasketSimpleDto>(basket);
         }
 
 
-        
+
         public IResult Add(Basket basket)
         {
             var isExist = checkExist(basket.UserId);
@@ -262,7 +263,10 @@ namespace Business.Concrete
             // Sepetteki ürünleri kampanya kapsamındaki ürünlerle karşılaştır
             bool firstProductExists = BasketDetailDto.BasketItems.Any(x => x.ProductId == campaign.ProductFirstId);
             bool secondProductExists = BasketDetailDto.BasketItems.Any(x => x.ProductId == campaign.ProductSecondId);
-            bool giftProductExists = BasketDetailDto.BasketItems.Any(x => x.ProductId == campaign.ProductGift);
+            //        bool giftProductExists = BasketDetailDto.BasketItems.Any(x => x.ProductId == campaign.ProductGift);
+            bool giftProductExists = _productDal.Get(x => x.Id == campaign.ProductGift) != null;
+
+
 
             if (!firstProductExists || !secondProductExists || !giftProductExists)
             {
@@ -282,7 +286,7 @@ namespace Business.Concrete
             {
                 secondProductQuantity++;
             }
-            int giftProductQuantity = 0;
+            int giftProductQuantity = 1;
             var giftProduct = BasketDetailDto.BasketItems.FirstOrDefault(x => x.ProductId == campaign.ProductGift);
             if (giftProduct != null)
             {
@@ -295,10 +299,10 @@ namespace Business.Concrete
             }
 
             //bunu bi test etmek lazım
-            if (giftProductQuantity != Math.Min(firstProductQuantity, secondProductQuantity))
-            {
-                return false;
-            }
+            //if (giftProductQuantity != Math.Min(firstProductQuantity, secondProductQuantity))
+            //{
+            //    return false;
+            //}
 
             return true;
         }
@@ -471,10 +475,42 @@ namespace Business.Concrete
             return true;
         }
 
+
         public IDataResult<BasketDetailDto> ApplyGiftCampaign(int campaignId, int basketId)
         {
-            var BasketDetailDto = _basketDal.GetBasketWithBasketId(basketId);
             var campaign = _campaignService.Get<CampaignGift>(CampaignTypes.GiftCampaign, campaignId).Data;
+
+
+            var BasketDetailDto1 = _basketDal.GetBasketWithBasketId(basketId);
+            bool isGiftProductExists = false;
+            foreach (var item in BasketDetailDto1.BasketItems)
+            {
+                if (item.ProductId == campaign.ProductGift)
+                {
+                    isGiftProductExists = true;
+                    break;
+                }
+            }
+            if (isGiftProductExists)
+            {
+                // Hediye ürün sepette zaten var
+            }
+            else
+            {
+                var basketItem = new BasketItem
+                {
+                    BasketId = basketId,
+                    ProductId = campaign.ProductGift.HasValue ? campaign.ProductGift.Value : default(int), // Null kontrolü yapılıyor
+                    ProductCount = 1,
+                    AddedDate = DateTime.Now,
+
+                };
+                // BasketItem'i ekle
+                _basketItemDal.Add(basketItem);
+            }
+            var BasketDetailDto = _basketDal.GetBasketWithBasketId(basketId);
+
+
             if (BasketDetailDto != null)
             {
                 if (campaign != null)
@@ -482,6 +518,11 @@ namespace Business.Concrete
                     var isGiftValid = IsGiftCampaignValid(campaign, BasketDetailDto);
                     if (isGiftValid)
                     {
+                       
+
+
+                        
+
                         var giftProduct = _productDal.Get(x => x.Id == campaign.ProductGift);
                         foreach (var item in BasketDetailDto.BasketItems)
                         {
@@ -644,7 +685,7 @@ namespace Business.Concrete
 
 
 
-       
+
 
 
 
@@ -829,7 +870,7 @@ namespace Business.Concrete
                                 {
                                     // Hediye edilen ürünün fiyatını düşür
                                     item.TotalPaidPrice = item.TotalPaidPrice - item.UnitPaidPrice;
-                                     deneme = item.UnitPaidPrice;
+                                    deneme = item.UnitPaidPrice;
                                     // Sepetin toplam ödenen fiyatını düşür
                                     BasketDetailDto.TotalBasketPaidPrice = BasketDetailDto.TotalBasketPaidPrice - item.UnitPaidPrice;
                                     var basket = _basketDal.Get(x => x.Id == BasketDetailDto.BasketId);
@@ -982,8 +1023,8 @@ namespace Business.Concrete
                 if (userCoupon == null)
                 {
 
-                   
-                    
+
+
                     if (validProducts)
                     {
                         var procuctcoupon = _productCouponDal.Get(x => x.Id == coupon.Id);
@@ -1005,7 +1046,7 @@ namespace Business.Concrete
 
 
 
-                        
+
 
                         }
 
@@ -1034,7 +1075,7 @@ namespace Business.Concrete
                 return new ErrorDataResult<BasketDetailDto>("kupon Bilgisi Bulunamadı.");
             }
             return new ErrorDataResult<BasketDetailDto>("Sepet Bilgisi Bulunamadı.");
-         
+
         }
 
         private bool IsProductcouponValid(CouponProduct coupon, BasketDetailDto BasketDetailDto)
