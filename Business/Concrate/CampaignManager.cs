@@ -632,34 +632,78 @@ namespace Business.Concrate
             }
             return false;
         }
-        private bool checkProductGroup(BasketDetailDto basket, CampaignProductGroupDto campaignGift)
+        private bool CampaignProductPercentage(BasketDetailDto basket, CampaignProductPercentageDiscount campaignGift)
         {
-            var isProductOneExist = basket.BasketItems?.Any(b => b.ProductId == campaignGift.ProductFirstId) ?? false;
-            var isProductSecondExist = basket.BasketItems?.Any(b => b.ProductId == campaignGift.ProductSecondId) ?? false;
-            if (isProductOneExist && isProductSecondExist && campaignGift.EndDate > DateTime.Now && campaignGift.StartDate < DateTime.Now)
+            var isProductOneExist = basket.BasketItems?.Any(b => b.ProductId == Convert.ToInt32(campaignGift.CombinedProduct)) ?? false;
+            if (isProductOneExist &&campaignGift.EndDate > DateTime.Now && campaignGift.StartDate < DateTime.Now)
             {
                 return true;
             }
             return false;
         }
 
-        private bool checkSecondary(BasketDetailDto basket, CampaignSecondDiscountDto campaignSeconds)
+        private bool checkCombinedDiscount(BasketDetailDto basket, CampaignCombinedDiscount campaignCombined)
         {
-            var isProductOneExist = basket.BasketItems?.Any(b => b.ProductId == campaignSeconds.ProductFirstId) ?? false;
-            var isProductSecond = basket.BasketItems?.Count(x => x.ProductId == campaignSeconds.ProductFirstId) >= 2;
-            if (isProductOneExist && isProductSecond && campaignSeconds.EndDate > DateTime.Now && campaignSeconds.StartDate < DateTime.Now)
+            // Kampanya koşullarını kontrol et
+            var isProductExist = basket.BasketItems?.Any(b => b.ProductId == Convert.ToInt32(campaignCombined.CombinedProduct)) ?? false;
+            if (isProductExist && campaignCombined.EndDate > DateTime.Now && campaignCombined.StartDate < DateTime.Now)
             {
                 return true;
             }
             return false;
         }
+
+        private bool checkCategoryPercentageDiscount(BasketDetailDto basket, CampaignCategoryPercentageDiscount campaignCategory)
+        {
+            // Kampanya koşullarını kontrol et
+            var isCategoryExist = basket.BasketItems?.Any(b => b.CategoryId == campaignCategory.CategoryId) ?? false;
+            if (isCategoryExist && campaignCategory.EndDate > DateTime.Now && campaignCategory.StartDate < DateTime.Now)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool checkSpecialDiscount(BasketDetailDto basket, CampaignSpecialDiscount campaignSpecial)
+        {
+            // Kampanya koşullarını kontrol et
+            var isProductExist = basket.BasketItems?.Any(b => b.ProductId == campaignSpecial.ProductID) ?? false;
+            if (isProductExist && campaignSpecial.EndDate > DateTime.Now && campaignSpecial.StartDate < DateTime.Now)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool checkCampaignGiftProduct(BasketDetailDto basket, CampaignGiftProduct campaignGiftProduct)
+        {
+            var isProductOneExist = basket.BasketItems?.Any(b => b.ProductId == campaignGiftProduct.GiftProductId) ?? false;
+          //  var isProductSecond = basket.BasketItems?.Count(x => x.ProductId == campaignSeconds.ProductFirstId) >= 2;
+            if (isProductOneExist && campaignGiftProduct.EndDate > DateTime.Now && campaignGiftProduct.StartDate < DateTime.Now)
+            {
+                return true;
+            }
+            return false;
+        }
+
+       
+
 
         public IDataResult<List<CampaignDto>> GetAllForBasket(int basketId)
         {
             var basket = _basketDal.GetBasketWithBasketId(basketId);
             var giftCampaigns = _campaignGiftDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
-            var campaignGroups = _campaignProductGroupDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+            var productPercentageDiscount = _productPercentageDiscountCampaignDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+            var campaignCombined = _combinedDiscountCampaignDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+            var campaignCategory = _categoryPercentageDiscountCampaignDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+            var campaignSpecial = _specialDiscountCampaignDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+            var campaignGiftProduct = _giftProductCampaignDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+
+
+           // var campaignGroups = _campaignProductGroupDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
             var campaignSeconds = _campaignSecondDiscountDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+
+
             var campaignList = new List<CampaignDto>();
             if (basket != null)
             {
@@ -671,34 +715,109 @@ namespace Business.Concrate
                         {
                             Id = item.Id,
                             Name = $"{item.ProductFirstName} Alışverişine - {item.ProductSecondName}  Hediye Ürün Kampanyası",
-                            CampaignType = CampaignTypes.GiftCampaign
+                            CampaignType = CampaignTypes.GiftCampaign,
+                            IsActive = item.IsActive,
+                            StartDate = item.StartDate,
+                            EndDate = item.EndDate,
+                           
+
                         });
                     }
                 }
-                foreach (var item in campaignGroups)
+                foreach (var item in productPercentageDiscount)
                 {
-                    if (checkProductGroup(basket, item))
+                    if (CampaignProductPercentage(basket, item))
                     {
                         campaignList.Add(new CampaignDto()
                         {
                             Id = item.Id,
-                            Name = $"{item.ProductFirstName} - {item.ProductSecondName} Alışverişine İndirimli Ürün Kampanyası",
+                            Name = $"{item.CombinedProduct} ID li ürünlerde %- {item.PercentageDiscountRate}  İndirim  Kampanyası",
                             CampaignType = CampaignTypes.ProductGroupCampaign,
+                            IsActive = item.IsActive,
+                            StartDate = item.StartDate,
+                            EndDate = item.EndDate,
+                            CampaignDetail=item.CampaignDetail,
+                            CampaignImageUrl=item.CampaignImageUrl,
                         });
                     }
                 }
-                foreach (var item in campaignSeconds)
+                foreach (var item in campaignCombined)
                 {
-                    if (checkSecondary(basket, item))
+                    if (checkCombinedDiscount(basket, item))
                     {
                         campaignList.Add(new CampaignDto()
                         {
                             Id = item.Id,
-                            Name = $"{item.ProductFirstName} Alışverişine İkinci Üründe %{item.ProductSecondDiscount} İndirim Kampanyası",
-                            CampaignType = CampaignTypes.SecondDiscountCampaign
+                            Name = $"{item.CombinedProduct}  ID li ürünlerde % - {item.PercentageDiscountRate}  İndirim Kampanyası",
+                            CampaignType = CampaignTypes.CombinedDiscountCampaign,
+                            IsActive = item.IsActive,
+                            StartDate = item.StartDate,
+                            CampaignDetail = item.CampaignDetail,
+                            CampaignImageUrl=item.CampaignImageUrl,
+                            EndDate = item.EndDate,
+                            
                         });
                     }
                 }
+
+                // Category Percentage Discount Campaigns
+                foreach (var item in campaignCategory)
+                {
+                    if (checkCategoryPercentageDiscount(basket, item))
+                    {
+                        campaignList.Add(new CampaignDto()
+                        {
+                            Id = item.Id,
+                            Name = $"{item.CategoryId} Kategori ıdsinde %{item.PercentageDiscountRate} İndirim Kampanyası",
+                            CampaignType = CampaignTypes.CategoryPercentageDiscountCampaign
+                            , IsActive = item.IsActive,
+                            StartDate = item.StartDate,
+                            CampaignDetail = item.CampaignDetail,
+                            CampaignImageUrl=item.CampaignImageUrl,
+                            EndDate = item.EndDate,
+
+                        });
+                    }
+                }
+
+                // Special Discount Campaigns
+                foreach (var item in campaignSpecial)
+                {
+                    if (checkSpecialDiscount(basket, item))
+                    {
+                        campaignList.Add(new CampaignDto()
+                        {
+                            Id = item.Id,
+                            Name = $"{item.CampaignName} Özel İndirim Kampanyası",
+                            CampaignType = CampaignTypes.SpecialDiscountCampaign,
+                            IsActive = item.IsActive,
+                            StartDate = item.StartDate,
+                            EndDate= item.EndDate,
+                            CampaignDetail= item.CampaignDetail,
+                            CampaignImageUrl=item.CampaignImageUrl, 
+                        });
+                    }
+                }
+                foreach (var item in campaignGiftProduct)
+                {
+                    if (checkCampaignGiftProduct(basket, item))
+                    {
+                        campaignList.Add(new CampaignDto()
+                        {
+                            Id = item.Id,
+                            Name = $"minimum {item.MinPurchaseAmount} tl siparişlerde  {item.GiftProductId} ıd li ürün hediye",
+                            CampaignType = CampaignTypes.SecondDiscountCampaign,
+                                IsActive = item.IsActive,
+                                StartDate = item.StartDate,
+                                EndDate= item.EndDate,
+                                CampaignDetail= item.CampaignDetail,
+                                CampaignImageUrl=item.CampaignImageUrl,
+                                
+                        });
+                    }
+                }
+             
+
             }
             return new SuccessDataResult<List<CampaignDto>>(campaignList);
         }

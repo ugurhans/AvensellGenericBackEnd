@@ -4,8 +4,10 @@ using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrate.EntityFramework;
+using DataAccess.Concrete.EntityFramework;
 using Entity.Abtract;
 using Entity.Concrate;
+using Entity.Concrate.paytr;
 using Entity.Dto;
 using Entity.Enum;
 using Entity.Request;
@@ -23,12 +25,14 @@ namespace Business.Concrate
         private readonly IProductCouponDal _productCouponDal;
         private readonly ICategoryCouponDal _categorycoupondal;
         private readonly ITimedCouponDal _timedCouponDal;
+        private readonly IBasketDal _basketDal;
 
-        public CouponManager(IProductCouponDal productCouponDal, ICategoryCouponDal categoryCouponDal, ITimedCouponDal timedCouponDal)
+        public CouponManager(IProductCouponDal productCouponDal, ICategoryCouponDal categoryCouponDal, ITimedCouponDal timedCouponDal, IBasketDal basketDal)
         {
             _productCouponDal = productCouponDal;
             _categorycoupondal = categoryCouponDal;
             _timedCouponDal = timedCouponDal;
+            _basketDal = basketDal;
         }
         public IResult Add(CouponAddDto coupon)
         {
@@ -138,9 +142,106 @@ namespace Business.Concrate
             return new SuccessDataResult<List<ICoupon>>(allCoupons);
         }
 
+
+        private bool CouponCategory(BasketDetailDto basket, CouponCategory couponCategory)
+        {
+            var isProductOneExist = basket.BasketItems?.Any(b => b.CategoryId == couponCategory.CategoryId) ?? false;
+            if (  isProductOneExist  && couponCategory.EndDate > DateTime.Now && couponCategory.StartDate < DateTime.Now)
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool CouponProduct(BasketDetailDto basket, CouponProduct couponProduct)
+        {
+            var isProductOneExist = basket.BasketItems?.Any(b => b.ProductId == Convert.ToInt32(couponProduct.CombinedProduct)) ?? false;
+            if (isProductOneExist && couponProduct.EndDate > DateTime.Now && couponProduct.StartDate < DateTime.Now)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool CouponTimed(BasketDetailDto basket, CouponTimed couponTimed)
+        {
+            // Kampanya koşullarını kontrol et
+            var isProductExist = basket.BasketItems?.Any(b => b.ProductId == Convert.ToInt32(couponTimed.CombinedProduct) && b.CategoryId == couponTimed.CategoryId) ?? false;
+            if (isProductExist && couponTimed.EndTime > DateTime.Now && couponTimed.StartTime < DateTime.Now)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public IDataResult<List<Coupon>> GetAllForBasket(int basketId)
         {
-            throw new NotImplementedException();
+            var basket = _basketDal.GetBasketWithBasketId(basketId);
+            var categorycoupon = _categorycoupondal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+            var productCoupon = _productCouponDal.GetAllDto(g => g.IsActive == true && g.StartDate < DateTime.Now && g.EndDate > DateTime.Now);
+            var timedCoupon = _timedCouponDal.GetAllDto(g => g.IsActive == true && g.StartTime < DateTime.Now && g.EndTime > DateTime.Now);
+            var couponList = new List<Coupon>();
+            if (basket != null)
+            {
+                foreach (var item in categorycoupon)
+                {
+                    if (CouponCategory(basket, item))
+                    {
+                        couponList.Add(new Coupon()
+                        {
+                            Id = item.Id,
+                            CouponName = $"{item.Code} koduna - {item.CategoryId}  kategori ıd li ürünlerde indirim ",
+                            couponTypes = CouponTypes.CouponCategory,
+                            CouponCode = item.Code,
+                            CouponImageUrl=item.CouponImageUrl,
+                            EndDate = item.EndDate,
+                            StartDate = item.StartDate,
+                            IsActive = item.IsActive,
+                            MinBasketCost = item.MinBasketCost,
+                            DiscountAmount  = item.Discount,
+                            
+                           
+                        });
+                    }
+                }
+                foreach (var item in productCoupon)
+                {
+                    if (CouponProduct(basket, item))
+                    {
+                        couponList.Add(new Coupon()
+                        {
+                            Id = item.Id,
+                            CouponName = $"{item.Code} koduna - {item.CombinedProduct}  ıd li ürünlerde indirim ",
+                            couponTypes = CouponTypes.CouponProduct,
+                            CouponCode = item.Code,
+                            EndDate = item.EndDate,
+                            StartDate = item.StartDate,
+                            IsActive = item.IsActive,
+                            MinBasketCost = item.MinBasketCost,
+                            DiscountAmount = item.Discount
+                        });
+                    }
+                }
+                foreach (var item in timedCoupon)
+                {
+                    if (CouponTimed(basket, item))
+                    {
+                        couponList.Add(new Coupon()
+                        {
+                            Id = item.Id,
+                            CouponName = $"{item.Code} koduna {item.EndTime} tarihe kadar  indirim ",
+                            couponTypes = CouponTypes.CouponTimed,
+                            CouponCode = item.Code,
+                            CouponImageUrl = item.CouponImageUrl,
+                            EndDate = item.EndTime,
+                            StartDate = item.StartTime,
+                            IsActive = item.IsActive,
+                            MinBasketCost = item.MinBasketCost,
+                            DiscountAmount = item.Discount
+                        });
+                    }
+                }
+            }
+            return new SuccessDataResult<List<Coupon>>(couponList);
         }
 
         public IDataResult<Coupon> GetCouponId(int id)

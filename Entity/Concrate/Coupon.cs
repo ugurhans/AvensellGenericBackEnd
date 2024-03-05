@@ -9,7 +9,7 @@ namespace Entity.Concrate
         public int Id { get; set; }
         public string CouponCode { get; set; }
         public decimal DiscountAmount { get; set; } //indirim miktarı
-        public int MinBasketCost { get; set; } //min sepet tutarı
+        public int? MinBasketCost { get; set; } //min sepet tutarı
         public bool IsActive { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

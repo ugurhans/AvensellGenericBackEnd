@@ -16,6 +16,8 @@ namespace Entity.Concrate
         public decimal Discount { get; set; }
         public string Name { get; set; }
         public int CategoryId { get; set; }
+
+        public int ProductId { get; set; }
         public int MinBasketCost { get; set; } //min sepet tutarı
         public bool IsActive { get; set; }
         public DateTime StartDate { get; set; }

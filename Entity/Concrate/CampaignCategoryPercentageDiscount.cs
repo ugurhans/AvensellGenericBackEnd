@@ -3,6 +3,7 @@ using Entity.Abtract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,5 +22,6 @@ namespace Entity.Concrate
         public string? CampaignName { get; set; }
         public string? CampaignDetail { get; set; }
         public string? CampaignImageUrl { get; set; }
+        public int ProductId { get; set; }
     }
 }
