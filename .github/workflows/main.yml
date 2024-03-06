@@ -1,0 +1,51 @@
+name: DeployAPI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:    
+    runs-on: [self-hosted]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0.x'
+
+    - name: Build with dotnet
+      run: dotnet build KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj --configuration Release
+
+    - name: Project publish
+      run: dotnet publish -c Release KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi
+
+    - name: Deploy to IIS
+      run: |
+        if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Started")
+        {
+            Stop-WebSite -Name kadimGross.site
+            echo "Stopped Website kadimGross.site"
+        }
+        if ((Get-WebAppPoolState -Name kadimGross.site).Value -eq "Started")
+        {
+            Stop-WebAppPool -Name kadimGross.site
+            echo "Stopped Application Pool kadimGross.site"
+        }
+        Start-Sleep -s 15        
+        Copy-Item ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
+        
+        if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Stopped")
+        {
+            Start-WebSite -Name kadimGross.site
+            echo "Started Website kadimGross.site"
+        }
+        if ((Get-WebAppPoolState -Name kadimGross.site).Value -eq "Stopped")
+        {
+            Start-WebAppPool -Name kadimGross.site
+            echo "Started Application Pool kadimGross.site"
+        }
+        if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
