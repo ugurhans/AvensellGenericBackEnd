@@ -27,8 +27,9 @@ namespace Business.Concrate
         private readonly ICampaignGiftProductDal _giftProductCampaignDal;
         private readonly ICampaignSpecialDiscountDal _specialDiscountCampaignDal;
         private readonly ICampaignCategoryPercentageDiscountDal  _categoryPercentageDiscountCampaignDal;
+        private readonly ICampaignCategoryPercentageDiscountItemDal _CampaignCategoryPercentageDiscountItemDal;
 
-        public CampaignManager(ICampaignGiftDal campaignGiftDal, ICampaignProductGroupDal campaignProductGrouptDal, ICampaignSecondDiscountDal campaignSecondDiscountDal, IBasketDal basketDal, ICampaignCategoryPercentageDiscountDal campaignCategoryPercentageDiscountDal, ICampaignSpecialDiscountDal campaignSpecialDiscountDal, ICampaignGiftProductDal  campaignGiftProductDal, ICampaignProductPercentageDiscountDal campaignProductPercentageDiscount, ICampaignCombinedDiscountDal campaignCombinedDiscountDal)
+        public CampaignManager(ICampaignGiftDal campaignGiftDal, ICampaignProductGroupDal campaignProductGrouptDal, ICampaignSecondDiscountDal campaignSecondDiscountDal, IBasketDal basketDal, ICampaignCategoryPercentageDiscountDal campaignCategoryPercentageDiscountDal, ICampaignSpecialDiscountDal campaignSpecialDiscountDal, ICampaignGiftProductDal  campaignGiftProductDal, ICampaignProductPercentageDiscountDal campaignProductPercentageDiscount, ICampaignCombinedDiscountDal campaignCombinedDiscountDal, ICampaignCategoryPercentageDiscountItemDal campaignCategoryPercentageDiscountItemDal)
         {
             _campaignGiftDal = campaignGiftDal;
             _campaignProductGroupDal = campaignProductGrouptDal;
@@ -39,7 +40,7 @@ namespace Business.Concrate
             _giftProductCampaignDal = campaignGiftProductDal;
             _specialDiscountCampaignDal = campaignSpecialDiscountDal;
             _categoryPercentageDiscountCampaignDal = campaignCategoryPercentageDiscountDal;
-
+            _CampaignCategoryPercentageDiscountItemDal = campaignCategoryPercentageDiscountItemDal;
         }
 
         public IDataResult<CampaignDto> GetCampaignID(int id)

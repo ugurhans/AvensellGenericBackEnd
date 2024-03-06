@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Abstract
 {
-    public interface ICampaignCategoryPercentageDiscountItemDal : IEntityRepository<CampaignCategoryPercentageDiscountItem>
+    public interface ICampaignCategoryPercentageDiscountItemDal// : IEntityRepository<CampaignCategoryPercentageDiscountItem>
     {
     }
 }

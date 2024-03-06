@@ -88,6 +88,8 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<MarketSetting> MarketSettings { get; set; }
 
         public DbSet<MarketSettingItem> marketSettingItems { get; set; }
+         
+        public DbSet<CampaignCategoryPercentageDiscountItem> campaignCategoryPercentageDiscountItems { get; set; }
 
 
     }

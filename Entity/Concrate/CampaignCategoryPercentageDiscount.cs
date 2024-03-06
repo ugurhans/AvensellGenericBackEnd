@@ -17,11 +17,19 @@ namespace Entity.Concrate
         public bool? IsActive { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-       // public int CategoryPercentageDiscountCampaignId { get; set; }
         public int? PercentageDiscountRate { get; set; }  // indirim yüzdeilk oranı 
         public string? CampaignName { get; set; }
         public string? CampaignDetail { get; set; }
         public string? CampaignImageUrl { get; set; }
+        public int ProductId { get; set; }
+
+     //   public List<CampaignCategoryPercentageDiscountItem>? ProductId { get; set; } // Liste olarak tanımlandı
+    }
+
+    public class CampaignCategoryPercentageDiscountItem:IEntity
+    {
+        public int Id { get; set; }
+
         public int ProductId { get; set; }
     }
 }

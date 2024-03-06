@@ -42,6 +42,7 @@ namespace Business.Concrete
         IBasketItemDal _basketItemDal;
         //IShopDal _shopDal;
         IMarketSettingDal _marketSettingDal;
+        ICampaignCategoryPercentageDiscountItemDal _CampaignCategoryPercentageDiscountItemDal;
 
         private readonly IPayTrOrderService _payTrOrderService;
         private readonly IPaytrLogDal _paytrLogDal;
@@ -63,7 +64,7 @@ namespace Business.Concrete
 
 
         public OrderManager(IOrderDal orderDal, IBasketService basketService, IOrderItemService orderItemService,
-               IBasketItemService basketItemService, IProductService productService, IBasketItemDal basketItemDal, IUserService userService, IPayTrOrderService payTrOrderService, IPaytrLogDal paytrLogDal, IHttpContextAccessor httpContextAccessor, IAddressService addressService, IOrderContactInfoDal orderContactInfoDal, IUserDal userDal, IBasketBoxesService basketBoxesService, IMarketSettingDal marketSettingDal)
+               IBasketItemService basketItemService, IProductService productService, IBasketItemDal basketItemDal, IUserService userService, IPayTrOrderService payTrOrderService, IPaytrLogDal paytrLogDal, IHttpContextAccessor httpContextAccessor, IAddressService addressService, IOrderContactInfoDal orderContactInfoDal, IUserDal userDal, IBasketBoxesService basketBoxesService, IMarketSettingDal marketSettingDal, ICampaignCategoryPercentageDiscountItemDal campaignCategoryPercentageDiscountItemDal)
 
         {
             _orderDal = orderDal;
@@ -80,6 +81,7 @@ namespace Business.Concrete
             _userDal = userDal;
             _basketBoxesService = basketBoxesService;
             _marketSettingDal = marketSettingDal;
+            _CampaignCategoryPercentageDiscountItemDal = campaignCategoryPercentageDiscountItemDal;
         }
 
         public IDataResult<List<OrderDto>> GetAllDto(int userId, OrderStates state)

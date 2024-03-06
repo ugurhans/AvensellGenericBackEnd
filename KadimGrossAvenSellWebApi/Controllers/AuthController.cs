@@ -49,20 +49,18 @@ namespace WebAPI.Controllers
         public ActionResult LoginAdmin(AdminForLoginDto adminForLoginDto)
         {
             var AdminToLogin = _authService.LoginAdmin(adminForLoginDto);
-            if (!AdminToLogin.Success)
-            {
-                return BadRequest(AdminToLogin.Message);
-            }
-
             var result = _authService.CreateAccessTokenAdmin(AdminToLogin.Data);
-            if (result.Success)
+
+            if (!AdminToLogin.Success || !result.Success)
             {
-                result.Data.BasketId = AdminToLogin.Data.BasketId;
-                return Ok(result);
+                return BadRequest(result);
             }
 
-            return BadRequest(result);
+            result.Data.BasketId = AdminToLogin.Data.BasketId;
+            return Ok(new { Message = AdminToLogin.Message, Token = result.Data.Token.Token });
         }
+
+
 
         [HttpPost("SendPasswordResetMail")]
         public async Task<ActionResult> SendPasswordResetMail(string userMail)
@@ -125,8 +123,12 @@ namespace WebAPI.Controllers
                 tokenResult.Data.BasketId = basket.Id;
                 return Ok(tokenResult);
             }
+            else
+            {
+                return BadRequest(tokenResult);
 
-            return BadRequest(tokenResult);
+            }
+            
         }
 
         [HttpPost("adminregister")]
