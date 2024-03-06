@@ -20,8 +20,8 @@ namespace KadimGrossAvenSellWebApi.Controllers
             _dashBoardSummaryService = dashBoardSummaryService;
         }
 
-        [HttpGet("GetSumamry")]
-        public IActionResult GetSumamry()
+        [HttpGet("GetSummary")]
+        public IActionResult GetSummary()
         {
             var result = _dashBoardSummaryService.GetSummary();
             if (result.Success)
