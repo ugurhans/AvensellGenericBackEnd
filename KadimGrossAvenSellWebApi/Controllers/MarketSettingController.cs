@@ -51,7 +51,7 @@ namespace KadimGrossAvenSellWebApi.Controllers
         }
 
 
-        [HttpPatch("Update")]
+        [HttpPost("Update")]
         public IActionResult Update(MarketSetting marketSetting)
         {
             var MarketSettingResult = _marketSettingService.Update(marketSetting);

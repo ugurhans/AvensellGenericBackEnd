@@ -12,6 +12,7 @@ using DataAccess.Abstract;
 using DataAccess.Concrate;
 using DataAccess.Concrate.EntityFramework;
 using DataAccess.Concrete.EntityFramework;
+using Entity.Concrate;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -139,6 +140,8 @@ namespace Business.DependencyResolvers.Autofac
 
             builder.RegisterType<EfMarketSettingItemDal>().As<IMarketSettingItemDal>().SingleInstance();
 
+            builder.RegisterType<EfCampaignCategoryPercentageDiscountItemDal>().As<ICampaignCategoryPercentageDiscountItemDal>().SingleInstance();
+            
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
