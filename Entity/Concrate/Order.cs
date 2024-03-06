@@ -36,9 +36,8 @@ namespace Entity.Concrete
 
         public int AddressId { get; set; }
         public List<OrderItem>? OrderItems { get; set; }
-        // bunlar dbb ye eklendi
         public DateTime? PaymentApprovedDate { get; set; }
-        public int OrderContactId { get; set; } 
+        public int? OrderContactId { get; set; } 
 
     }
 }

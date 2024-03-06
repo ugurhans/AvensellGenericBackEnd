@@ -45,19 +45,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("adminlogin")]
+        [HttpPost("LoginAdmin")]
         public ActionResult LoginAdmin(AdminForLoginDto adminForLoginDto)
         {
-            var AdminToLogin = _authService.LoginAdmin(adminForLoginDto);
-            var result = _authService.CreateAccessTokenAdmin(AdminToLogin.Data);
+            var loginAdminResult = _authService.LoginAdmin(adminForLoginDto);
+            var result = _authService.CreateAccessTokenAdmin(loginAdminResult.Data);
 
-            if (!AdminToLogin.Success || !result.Success)
+            if (!loginAdminResult.Success || !result.Success)
             {
                 return BadRequest(result);
             }
-
-            result.Data.BasketId = AdminToLogin.Data.BasketId;
-            return Ok(new { Message = AdminToLogin.Message, Token = result.Data.Token.Token });
+            return Ok(result);
         }
 
 
