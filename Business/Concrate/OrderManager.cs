@@ -1,33 +1,18 @@
 ﻿using Business.Abstract;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entity.DTOs;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using Business.Constants;
 using Entity.Concrete;
 using Entity.Concrate;
 using Entity.Dto;
 using Entity.Enum;
-using Azure;
-using Bogus.Bson;
 using System.Net;
 using Newtonsoft.Json.Linq;
-using Entity.Result;
 using System.Collections.Specialized;
 using System.Security.Cryptography;
-using System.Web;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Bcpg;
-using MailKit.Search;
 using Entity.Concrate.paytr;
-using DataAccess.Concrate.EntityFramework;
 using Microsoft.AspNetCore.Http;
-using Org.BouncyCastle.Asn1.X509;
-using static Azure.Core.HttpHeader;
-using Bogus.DataSets;
-using DataAccess.Concrete.EntityFramework;
 
 namespace Business.Concrete
 {
@@ -57,9 +42,6 @@ namespace Business.Concrete
         private readonly IOrderRepeatDal _orderRepeatDal;
         private readonly IBasketDal basketDal;
         private readonly IUserService _userService;
-
-
-
 
 
 
@@ -221,12 +203,11 @@ namespace Business.Concrete
 
         public async Task<IResult> AddPayTr(OrderCreateRequestDto order)
         {
-           
             var basket = _basketService.GetDetailByBasketId(order.BasketId).Data;
             var priceLast = _basketBoxesService.GetBasketPrice(basket.UserId.Value);
             var selectedAddressResult = _addressService.GetSelectedAddress(order.AddressId).Data;
             var marketSetting = _marketSettingDal.Get(x => x.Id == order.MarketId && x.DeliveryFee != null);
-            decimal deliveryFee = marketSetting?.DeliveryFee ?? 0; // Null ise 0 olarak kabul et
+            decimal deliveryFee = marketSetting?.DeliveryFee ?? 0;
             var newOrder = new Order()
             {
                 UserId = order.UserId,
@@ -235,7 +216,7 @@ namespace Business.Concrete
                 TotalOrderPrice = order.TotalOrderPrice,
                 TotalOrderPaidPrice = order.TotalOrderPaidPrice+ (marketSetting?.DeliveryFee ?? deliveryFee),
                 OrderDate = order.OrderDate,
-                State = order.State,
+                State = OrderStates.UNAPPROVED,
                 ConfirmDate = order.ConfirmDate, 
                 CompletedDate = order.CompletedDate,
                 PaymentType = order.PaymentType,
@@ -386,8 +367,8 @@ namespace Business.Concrete
                     UserName = user.FirstName + " " + user.LastName,
                     UserAddress = address.BuildingNo + " " + address.ApartmentNo + " " + address.Floor + " " + address.Neighborhood + " " + address.Country + " " + address.City,
                     UserPhone = "+" + user.Phone,
-                    MerchantOkUrl = "http://www.siteniz.com/basarili",
-                    MerchantFailUrl = "http://www.siteniz.com/basarisiz",
+                    MerchantOkUrl = "http://admin.titiztürkiye.com/pages/paymentSuccess.html",
+                    MerchantFailUrl = "http://admin.titiztürkiye.com/pages/paymentReject.html",
                     UserIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString() ?? "2.56.152.68",
                     Currency = "TL",
                     NoInstallment = "yes"
@@ -426,8 +407,21 @@ namespace Business.Concrete
                 _paytrLogDal.Add(newLogErr);
                 return new ErrorResult();
             }
+            if (paytrWebHookDto.status == "failed")
+            {
+                var errLog = new PaytrLog()
+                {
+                    ContentMessage = paytrWebHookDto.failed_reason_code + " : " + paytrWebHookDto.status,
+                    OrderId = order.Id,
+                    RequestDate = DateTime.Now,
+                    UserId = order.UserId,
+                    Success = true,
+                };
+                _paytrLogDal.Add(errLog);
+                return new ErrorResult();
+            }
             order.State = OrderStates.APPROVED;
-           order.PaymentApprovedDate = DateTime.Now; 
+            order.PaymentApprovedDate = DateTime.Now; 
             var newLog = new PaytrLog()
             {
                 ContentMessage = paytrWebHookDto.status,
@@ -645,8 +639,6 @@ namespace Business.Concrete
 
         public  IResult Update(OrderUpdateDto order)
         {
-
-
             //  var existingOrder = _orderDal.Get(o => o.Id == order.OrderId);
             var existingOrder = _orderDal.GetOrderDetails(order.OrderId);
             // Eğer Order varsa güncelle, yoksa hata ver
@@ -709,8 +701,7 @@ namespace Business.Concrete
 
                 }
             }
-           
-          else 
+            else 
             {
                 return new ErrorResult("güncellenemedi.");
             }

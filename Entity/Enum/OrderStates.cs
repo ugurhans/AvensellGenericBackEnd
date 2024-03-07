@@ -14,12 +14,7 @@ namespace Entity.Enum
         COMPLETED = 6,
 
         CANCELED = 7,
-        DELETED = 8,
-
-        //titiz bu şekilde.
-        //Approved = 2,  ?
-        //Completed = 4,  ?
-        //Unapproved = 9 ?
+        DELETED = 8
     }
 
 
