@@ -203,30 +203,38 @@ namespace Business.Concrete
 
         public async Task<IResult> AddPayTr(OrderCreateRequestDto order)
         {
-            var basket = _basketService.GetDetailByBasketId(order.BasketId).Data;
+            var user = _userDal.Get(user => user.Id == order.UserId);
+            if (user == null)
+                return new ErrorResult("User Not Found");
+            var basket = _basketService.GetDetailByBasketId(user.Id).Data;
+            if(basket == null)
+                return new ErrorResult("Basket Not Found");
+            var marketSetting = _marketSettingDal.GetAll(x=>x.DeliveryFee != null).FirstOrDefault();
+            if(marketSetting == null)
+                return new ErrorResult("Market Settings Not Found");   
+            
             var priceLast = _basketBoxesService.GetBasketPrice(basket.UserId.Value);
-            var selectedAddressResult = _addressService.GetSelectedAddress(order.AddressId).Data;
-            var marketSetting = _marketSettingDal.Get(x => x.Id == order.MarketId && x.DeliveryFee != null);
-            decimal deliveryFee = marketSetting?.DeliveryFee ?? 0;
+            if (basket.BasketItems.Count < 1)
+                return new ErrorResult("Sipariş oluşturmak için sepetinizde ürün bulunmalı.");
+            
             var newOrder = new Order()
             {
                 UserId = order.UserId,
-                BasketId=order.BasketId,
-                TotalOrderDiscount = order.TotalOrderDiscount,
-                TotalOrderPrice = order.TotalOrderPrice,
-                TotalOrderPaidPrice = order.TotalOrderPaidPrice+ (marketSetting?.DeliveryFee ?? deliveryFee),
-                OrderDate = order.OrderDate,
+                BasketId=basket.BasketId,
+                TotalOrderDiscount = basket.TotalBasketDiscount,
+                TotalOrderPrice = basket.TotalBasketPrice,
+                TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (marketSetting.DeliveryFee),
+                OrderDate = DateTime.Now,
                 State = OrderStates.UNAPPROVED,
-                ConfirmDate = order.ConfirmDate, 
-                CompletedDate = order.CompletedDate,
+                ConfirmDate = null, 
+                CompletedDate = null,
                 PaymentType = order.PaymentType,
-                IsCampaignApplied = order.IsCampaignApplied,
-                CampaignType = order.CampaignType,
-                CampaignId = order.CampaignId,
-                CampaignDiscount = order.CampaignDiscount,
+                IsCampaignApplied = basket.IsCampaignApplied,
+                CampaignType = basket.CampaignType,
+                CampaignId = basket.CampaignId,
+                CampaignDiscount = basket.CampaignDiscount,
                 AddressId = order.AddressId,
-                DeliveryFee = (marketSetting?.DeliveryFee ?? deliveryFee)
-
+                DeliveryFee = (marketSetting?.DeliveryFee)
             };
          
             if (basket.IsCampaignApplied == true && basket.CampaignId != null)
@@ -268,23 +276,20 @@ namespace Business.Concrete
                 {
                     var totalBasketPaidPrice = basket.TotalBasketPaidPrice;
                     basket = campaignResult.Data;
-                    order.IsCampaignApplied = true;
-                    order.CampaignDiscount = totalBasketPaidPrice - basket.TotalBasketPaidPrice;
-                    order.CampaignId = basket.CampaignId;
-                    order.CampaignType = basket.CampaignType;
+                    newOrder.IsCampaignApplied = true;
+                    newOrder.CampaignDiscount = totalBasketPaidPrice - basket.TotalBasketPaidPrice;
+                    newOrder.CampaignId = basket.CampaignId;
+                    newOrder.CampaignType = basket.CampaignType;
                 }
             }
-
-           
-            order.OrderDate = DateTime.Now;
-            order.State = OrderStates.UNAPPROVED;
-            order.TotalOrderDiscount = basket.TotalBasketDiscount;
-            order.TotalOrderPrice = basket.TotalBasketPrice;
-            order.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (marketSetting?.DeliveryFee ?? deliveryFee);
-            order.ConfirmDate = null;
-
-
-            var address = _addressService.GetSelectedAddress(order.AddressId).Data;
+            newOrder.OrderDate = DateTime.Now;
+            newOrder.State = OrderStates.UNAPPROVED;
+            newOrder.TotalOrderDiscount = basket.TotalBasketDiscount;
+            newOrder.TotalOrderPrice = basket.TotalBasketPrice;
+            newOrder.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (marketSetting?.DeliveryFee);
+            newOrder.ConfirmDate = null;
+            
+          var address = _addressService.GetSelectedAddress(order.AddressId).Data;
             _orderDal.Add(newOrder);
 
             if (address != null)
@@ -312,13 +317,11 @@ namespace Business.Concrete
                 };
 
                 _orderContactInfoDal.Add(newContact);
-                order.OrderContactId = newContact.Id;
+                newOrder.OrderContactId = newContact.Id;
                 _orderDal.Update(newOrder);
           
             }
-            if (basket.BasketItems.Count < 1)
-                return new ErrorResult("Sipariş oluşturmak için sepetinizde ürün bulunmalı.");
-
+         
             foreach (var item in basket.BasketItems)
             {
                 var orderItem = new OrderItem
@@ -357,8 +360,6 @@ namespace Business.Concrete
             else if (order.PaymentType == PaymentTypes.OnlinePayment || order.PaymentType == PaymentTypes.CreditCardOnDelivery)
 
             {
-              
-                var user = _userDal.GetProfileDto(order.UserId);
                 var payTrPaymentInfo = new PayTrPaymentInfo()
                 {
                     Email = user.Email,
@@ -366,7 +367,7 @@ namespace Business.Concrete
                     MerchantOid = newOrder.Id.ToString(),
                     UserName = user.FirstName + " " + user.LastName,
                     UserAddress = address.BuildingNo + " " + address.ApartmentNo + " " + address.Floor + " " + address.Neighborhood + " " + address.Country + " " + address.City,
-                    UserPhone = "+" + user.Phone,
+                    UserPhone = "+" + user.PhoneNumber,
                     MerchantOkUrl = "http://admin.titiztürkiye.com/pages/paymentSuccess.html",
                     MerchantFailUrl = "http://admin.titiztürkiye.com/pages/paymentReject.html",
                     UserIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString() ?? "2.56.152.68",
