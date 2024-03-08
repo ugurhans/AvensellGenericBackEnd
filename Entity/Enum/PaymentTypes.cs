@@ -1,7 +1,6 @@
 ﻿using System;
 namespace Entity.Enum
 {
-
     public enum PaymentTypes
     {
         CashOnDelivery = 1,

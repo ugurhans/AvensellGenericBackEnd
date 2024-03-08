@@ -206,7 +206,7 @@ namespace Business.Concrete
             var user = _userDal.Get(user => user.Id == order.UserId);
             if (user == null)
                 return new ErrorResult("User Not Found");
-            var basket = _basketService.GetDetailByBasketId(user.Id).Data;
+            var basket = _basketService.GetDetailByUserId(user.Id).Data;
             if(basket == null)
                 return new ErrorResult("Basket Not Found");
             var marketSetting = _marketSettingDal.GetAll(x=>x.DeliveryFee != null).FirstOrDefault();

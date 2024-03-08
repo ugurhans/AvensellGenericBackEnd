@@ -28,25 +28,22 @@ namespace DataAccess.Concrate.EntityFramework
                     from user in UsersJoin.DefaultIfEmpty()
                     join p in context.Products on oi.ProductId equals p.Id into Products
                     from p in Products.DefaultIfEmpty()
+                    group new { oi, p } by new { o.Id, o.State, user.FirstName, user.LastName, o.OrderDate, o.TotalOrderPaidPrice } into grouped
                     select new OrderBasicDto()
                     {
-                        OrderId = o.Id,
-                        State = o.State,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        OrdersItem = new List<OrderItemDtoBasic>()
+                        OrderId = grouped.Key.Id,
+                        State = grouped.Key.State,
+                        FirstName = grouped.Key.FirstName,
+                        LastName = grouped.Key.LastName,
+                        OrderDate = grouped.Key.OrderDate,
+                        TotalOrderPaidPrice = grouped.Key.TotalOrderPaidPrice,
+                        OrdersItem = grouped.Select(item => new OrderItemDtoBasic
                         {
-                            new OrderItemDtoBasic() 
-                            {
-                                ProductName = p.Name,
-                                ImageUrl = p.ImageUrl 
-                            }
-                        },
-                        OrderDate = o.OrderDate,
-                        TotalOrderPaidPrice = o.TotalOrderPaidPrice
+                            ProductName = item.p.Name,
+                            ImageUrl = item.p.ImageUrl
+                        }).ToList()
                     };
                 return result.ToList();
-
             }
         }
 
@@ -73,10 +70,10 @@ namespace DataAccess.Concrate.EntityFramework
                                  PaymentType = ((PaymentTypes)o.PaymentType).ToString(),
                                  CompletedDate = o.CompletedDate,
                                  ConfirmDate = o.ConfirmDate,
-                                 OrdersItem = (
-                                     new List<OrderItemDto>()
-                                     {
-                                         new OrderItemDto()
+                                 OrdersItem = 
+                                     ( from oi in context.OrderItems
+                                         where oi.OrderId == o.Id
+                                         select new OrderItemDto()
                                          {
                                              Id = oi.Id,
                                              OrderId = oi.OrderId,
@@ -92,8 +89,7 @@ namespace DataAccess.Concrate.EntityFramework
                                              ProductPaidPrice = oi.ProductPaidPrice,
                                              Image = p.ImageUrl
                                          }
-                                     }
-                                 ).ToList(),
+                                     ).ToList(),
                                  TotalOrderPrice = o.TotalOrderPrice,
                                  TotalOrderDiscount = o.TotalOrderDiscount,
                                  OrderDate = o.OrderDate,
@@ -127,26 +123,25 @@ namespace DataAccess.Concrate.EntityFramework
                                  PaymentType = ((PaymentTypes)o.PaymentType).ToString(),
                                  CompletedDate = o.CompletedDate,
                                  ConfirmDate = o.ConfirmDate,
-                                 OrdersItem = (
-                                               new List<OrderItemDto>()
-                                               {
-                                                   new OrderItemDto()
-                                                   {
-                                                       Id = oi.Id,
-                                                       OrderId = oi.OrderId,
-                                                       ProductId = oi.ProductId,
-                                                       BasketItemId = oi.BasketItemId,
-                                                       TotalPrice = oi.TotalPrice,
-                                                       TotalDiscount = oi.TotalDiscount,
-                                                       TotalPaidPrice = oi.TotalPaidPrice,
-                                                       ProductCount = oi.ProductCount,
-                                                       ProductName = oi.ProductName,
-                                                       ProductPrice = oi.ProductPrice,
-                                                       ProductDiscountPrice = oi.ProductDiscountPrice,
-                                                       ProductPaidPrice = oi.ProductPaidPrice,
-                                                       Image = p.ImageUrl
-                                                   }
-                                               }
+                                 OrdersItem = 
+                                     ( from oi in context.OrderItems
+                                         where oi.OrderId == o.Id
+                                         select new OrderItemDto()
+                                         {
+                                             Id = oi.Id,
+                                             OrderId = oi.OrderId,
+                                             ProductId = oi.ProductId,
+                                             BasketItemId = oi.BasketItemId,
+                                             TotalPrice = oi.TotalPrice,
+                                             TotalDiscount = oi.TotalDiscount,
+                                             TotalPaidPrice = oi.TotalPaidPrice,
+                                             ProductCount = oi.ProductCount,
+                                             ProductName = oi.ProductName,
+                                             ProductPrice = oi.ProductPrice,
+                                             ProductDiscountPrice = oi.ProductDiscountPrice,
+                                             ProductPaidPrice = oi.ProductPaidPrice,
+                                             Image = p.ImageUrl
+                                         }
                                      ).ToList(),
                                  TotalOrderPrice = o.TotalOrderPrice,
                                  TotalOrderDiscount = o.TotalOrderDiscount,
@@ -183,10 +178,10 @@ namespace DataAccess.Concrate.EntityFramework
                                  PaymentType = ((PaymentTypes)o.PaymentType).ToString(),
                                  CompletedDate = o.CompletedDate,
                                  ConfirmDate = o.ConfirmDate,
-                                 OrdersItem = (
-                                     new List<OrderItemDto>()
-                                     {
-                                         new OrderItemDto()
+                                 OrdersItem = 
+                                     ( from oi in context.OrderItems
+                                         where oi.OrderId == o.Id
+                                         select new OrderItemDto()
                                          {
                                              Id = oi.Id,
                                              OrderId = oi.OrderId,
@@ -202,8 +197,7 @@ namespace DataAccess.Concrate.EntityFramework
                                              ProductPaidPrice = oi.ProductPaidPrice,
                                              Image = p.ImageUrl
                                          }
-                                     }
-                                 ).ToList(),
+                                     ).ToList(),
                                  TotalOrderPrice = o.TotalOrderPrice,
                                  TotalOrderDiscount = o.TotalOrderDiscount,
                                  OrderDate = o.OrderDate,
@@ -252,10 +246,10 @@ namespace DataAccess.Concrate.EntityFramework
                                  PaymentType = ((PaymentTypes)o.PaymentType).ToString(),
                                  CompletedDate = o.CompletedDate,
                                  ConfirmDate = o.ConfirmDate,
-                                 OrdersItem = (
-                                     new List<OrderItemDto>()
-                                     {
-                                         new OrderItemDto()
+                                 OrdersItem = 
+                                     ( from oi in context.OrderItems
+                                         where oi.OrderId == o.Id
+                                         select new OrderItemDto()
                                          {
                                              Id = oi.Id,
                                              OrderId = oi.OrderId,
@@ -271,8 +265,7 @@ namespace DataAccess.Concrate.EntityFramework
                                              ProductPaidPrice = oi.ProductPaidPrice,
                                              Image = p.ImageUrl
                                          }
-                                     }
-                                 ).ToList(),
+                                     ).ToList(),
                                  TotalOrderPrice = o.TotalOrderPrice,
                                  TotalOrderDiscount = o.TotalOrderDiscount,
                                  OrderDate = o.OrderDate,
@@ -352,10 +345,10 @@ namespace DataAccess.Concrate.EntityFramework
                                  PaymentType = ((PaymentTypes)o.PaymentType).ToString(),
                                  CompletedDate = o.CompletedDate,
                                  ConfirmDate = o.ConfirmDate,
-                                 OrdersItem = (
-                                     new List<OrderItemDto>()
-                                     {
-                                         new OrderItemDto()
+                                 OrdersItem = 
+                                     ( from oi in context.OrderItems
+                                         where oi.OrderId == o.Id
+                                         select new OrderItemDto()
                                          {
                                              Id = oi.Id,
                                              OrderId = oi.OrderId,
@@ -371,8 +364,7 @@ namespace DataAccess.Concrate.EntityFramework
                                              ProductPaidPrice = oi.ProductPaidPrice,
                                              Image = p.ImageUrl
                                          }
-                                     }
-                                 ).ToList(),
+                                     ).ToList(),
                                  TotalOrderPrice = o.TotalOrderPrice,
                                  TotalOrderDiscount = o.TotalOrderDiscount,
                                  OrderDate = o.OrderDate,
