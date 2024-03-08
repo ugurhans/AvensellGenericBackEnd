@@ -330,9 +330,6 @@ namespace DataAccess.Concrate.EntityFramework
                 var result = from o in context.Orders
                              join a in context.Addresses
                                  on o.AddressId equals a.Id
-                             join oi in context.OrderItems on o.Id equals oi.OrderId
-                             join p in context.Products on oi.ProductId equals p.Id into products
-                             from p in products.DefaultIfEmpty()
                              select new OrderDto()
                              {
                                  OrderId = o.Id,
@@ -348,6 +345,8 @@ namespace DataAccess.Concrate.EntityFramework
                                  OrdersItem = 
                                      ( from oi in context.OrderItems
                                          where oi.OrderId == o.Id
+                                         join p in context.Products on oi.ProductId equals p.Id into products
+                                         from p in products.DefaultIfEmpty()
                                          select new OrderItemDto()
                                          {
                                              Id = oi.Id,
