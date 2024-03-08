@@ -13,10 +13,11 @@ namespace Entity.Dto
     public class OrderBasicDto:IDto
     {
         public int OrderId { get; set; }
-        public decimal? TotalOrderPaidPrice { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public OrderStates? State { get; set; }
         public DateTime? OrderDate { get; set; }
+        public decimal? TotalOrderPaidPrice { get; set; }
         public List<OrderItemDtoBasic> OrdersItem { get; set; }
-
     }
 }

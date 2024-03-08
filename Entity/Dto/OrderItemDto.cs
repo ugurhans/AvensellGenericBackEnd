@@ -31,6 +31,7 @@ namespace Entity.Dto
     public class OrderItemDtoBasic
     {
         public string? ProductName { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }
 

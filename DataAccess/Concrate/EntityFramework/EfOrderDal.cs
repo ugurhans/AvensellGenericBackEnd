@@ -28,21 +28,30 @@ namespace DataAccess.Concrate.EntityFramework
 .FirstOrDefault();
 
                 var result = from o in context.Orders
-                             where o.UserId == UserId
-                             join a in context.OrderItems on o.Id equals a.OrderId
-                             select new OrderBasicDto()
-                             {
-                                 OrderId = o.Id,
-                                 State = o.State,
-                                 OrdersItem = (from oi in context.OrderItems
-                                               where oi.OrderId == o.Id
-                                               select new OrderItemDtoBasic
-                                               {
-                                                   ProductName = oi.ProductName,
-                                               }).ToList(),
-                                 OrderDate = o.OrderDate,
-                                 TotalOrderPaidPrice = o.TotalOrderPaidPrice + deliveryFee, // deliveryFee kullanarak toplam tutarı güncelle
-                             };
+                    where o.UserId == UserId
+                    join oi in context.OrderItems on o.Id equals oi.OrderId
+                    join u in context.Users on o.UserId equals u.Id into UsersJoin
+                    from user in UsersJoin.DefaultIfEmpty()
+                    join p in context.Products on oi.ProductId equals p.Id into Products
+                    from p in Products.DefaultIfEmpty()
+                    select new OrderBasicDto()
+                    {
+                        OrderId = o.Id,
+                        State = o.State,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        OrdersItem = new List<OrderItemDtoBasic>()
+                        {
+                            new OrderItemDtoBasic() 
+                            {
+                                ProductName = p.Name,
+                                ImageUrl = p.ImageUrl 
+                            }
+                        },
+                        OrderDate = o.OrderDate,
+                        TotalOrderPaidPrice = o.TotalOrderPaidPrice
+                    };
+
 
                 return result.ToList();
 
