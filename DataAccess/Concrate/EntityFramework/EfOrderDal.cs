@@ -279,7 +279,7 @@ namespace DataAccess.Concrate.EntityFramework
         {
             using (AvenSellContext context = new AvenSellContext())
             {
-                var result = from o in context.Orders
+                var result = from o in context.Orders.OrderByDescending(x=>x.OrderDate)
                              join u in context.Users on o.UserId equals u.Id
                              select new OrderSimpleDto()
                              {
