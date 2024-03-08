@@ -22,22 +22,12 @@ namespace WebAPI.Controllers
             _fileStorageService = fileStorageService;
         }
 
-        [HttpGet("getallByUserId")]
-        public IActionResult GetAllByUserId(int userId, OrderStates state)
-        {
-            var result = _orderService.GetAllDto(userId, state);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+       
 
-            return BadRequest(result);
-        }
-
-        [HttpGet("GetbyOrderidBasic/{UserId}")]
-        public IActionResult GetByOrderIdBasic(int UserId)
+        [HttpGet("GetOrderBasicByUserId/{userId}")]
+        public IActionResult GetOrderBasicByUserId(int userId)
         {
-            var result = _orderService.GetByOrderIdBasic(UserId);
+            var result = _orderService.GetOrderBasicByUserId(userId);
 
             if (result.Success)
             {
@@ -62,17 +52,6 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet("getallByState")]
-        public IActionResult GetAllByState(OrderStates state, DateTime? dateStart, DateTime? dateEnd)
-        {
-            var result = _orderService.GetAllByState(state, dateStart, dateEnd);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
 
         [HttpGet("GetAllWithParts")]
         public IActionResult GetAllWithParts()
@@ -97,32 +76,6 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
-
-        [HttpGet("GetBadgeWithState")]
-        public IActionResult GetBadgeWithState(OrderStates stateId)
-        {
-            var result = _orderService.GetBadgeWithState(stateId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
-        [HttpPost("CompleteOrder")]
-        public IActionResult CompleteOrder(int orderId)
-        {
-            var result = _orderService.CompleteOrder(orderId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
-
         [HttpPost("CancelOrder")]
         public IActionResult CancelOrder(int orderId)
         {
@@ -160,29 +113,16 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpDelete("Delete")]
-        public IActionResult Delete(int orderId)
-        {
-            var result = _orderService.Delete(orderId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
-        [HttpPost("Ordercomplete")]
+        [HttpPost("CompleteOrderForPaytr")] //for paytr
         [Consumes("application/x-www-form-urlencoded", "application/json")]
-        public async Task<IActionResult> ordercomplete()
+        public async Task<IActionResult> CompleteOrderForPaytr()
         {
-
-            var formData = HttpContext.Request.Form;
-            var paytrWebHookDto = new PaytrWebHookDto();
-            paytrWebHookDto.merchant_oid = formData["merchant_oid"];
-            paytrWebHookDto.status = formData["status"];
-
-            _orderService.OrderComplate(paytrWebHookDto);
+            //
+            // var formData = HttpContext.Request.Form;
+            // var paytrWebHookDto = new PaytrWebHookDto();
+            // paytrWebHookDto.merchant_oid = formData["merchant_oid"];
+            // paytrWebHookDto.status = formData["status"];
+            // _orderService.OrderComplate(paytrWebHookDto);
             return Ok("OK");
         }
 
@@ -198,30 +138,95 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
+        
+        // [HttpGet("GetAllByUserId")]
+        // public IActionResult GetAllByUserId(int userId, OrderStates state)
+        // {
+        //     var result = _orderService.GetAllDto(userId, state);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        
+        
+        // }
+        // [HttpGet("getallByState")]
+        // public IActionResult GetAllByState(OrderStates state, DateTime? dateStart, DateTime? dateEnd)
+        // {
+        //     var result = _orderService.GetAllByState(state, dateStart, dateEnd);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        // }
 
-        [HttpPost("Update")]
-        public IActionResult Update(OrderUpdateDto orderUpdate)
-        {
-            var result = _orderService.Update(orderUpdate);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        // [HttpGet("GetBadgeWithState")]
+        // public IActionResult GetBadgeWithState(OrderStates stateId)
+        // {
+        //     var result = _orderService.GetBadgeWithState(stateId);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        // }
+        //
+        // [HttpPost("CompleteOrder")]
+        // public IActionResult CompleteOrder(int orderId)
+        // {
+        //     var result = _orderService.CompleteOrder(orderId);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        // }
 
 
+       
+        // [HttpDelete("Delete")]
+        // public IActionResult Delete(int orderId)
+        // {
+        //     var result = _orderService.Delete(orderId);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        // }
 
-        [HttpGet("GetOrdersWithCount")]
-        public IActionResult GetOrdersWithCount(int orderCount)
-        {
-            var result = _orderService.GetOrdersWithCount(orderCount);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+       
 
-            return BadRequest(result);
-        }
+        // [HttpPost("Update")]
+        // public IActionResult Update(OrderUpdateDto orderUpdate)
+        // {
+        //     var result = _orderService.Update(orderUpdate);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //     return BadRequest(result);
+        // }
+
+
+        //
+        // [HttpGet("GetOrdersWithCount")]
+        // public IActionResult GetOrdersWithCount(int orderCount)
+        // {
+        //     var result = _orderService.GetOrdersWithCount(orderCount);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        // }
     }
 }

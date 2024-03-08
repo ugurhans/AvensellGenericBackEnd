@@ -77,7 +77,7 @@ namespace Business.Concrete
         }
 
   
-       public IDataResult<List<OrderBasicDto>> GetByOrderIdBasic(int UserId)
+       public IDataResult<List<OrderBasicDto>> GetOrderBasicByUserId(int UserId)
         {
             return new SuccessDataResult<List<OrderBasicDto>>(_orderDal.GetOrderDetailBasic(UserId));
         }
@@ -620,7 +620,7 @@ namespace Business.Concrete
 
         public IDataResult<List<OrderSimpleDto>> GetLastOrdersSimple()
         {
-            return new SuccessDataResult<List<OrderSimpleDto>>(_orderDal.GetAllDtoSimple(x => x.State == OrderStates.WAITINGCARDPAYMENT || x.State == OrderStates.UNAPPROVED).Take(8).ToList());
+            return new SuccessDataResult<List<OrderSimpleDto>>(_orderDal.GetAllDtoSimple(x => x.State == OrderStates.WAITINGCARDPAYMENT || x.State == OrderStates.UNAPPROVED).OrderByDescending(x=>x.OrderDate).Take(8).ToList());
         }
 
         public IDataResult<GraphPieDto> GetTopCategories(int count)

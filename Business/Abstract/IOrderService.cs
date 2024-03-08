@@ -32,7 +32,7 @@ namespace Business.Abstract
         IResult OrderComplate(PaytrWebHookDto paytrWebHookDto);//
         Task<IResult> AddPayTr(OrderCreateRequestDto order);
         IDataResult<List<OrderDto>> GetByOrderId(int orderıd);
-        IDataResult<List<OrderBasicDto>> GetByOrderIdBasic(int UserId);
+        IDataResult<List<OrderBasicDto>> GetOrderBasicByUserId(int UserId);
 
         IResult Update(OrderUpdateDto order);
 

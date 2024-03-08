@@ -55,9 +55,6 @@ namespace DataAccess.Concrate.EntityFramework
                              where o.Id == orderId
                              join a in context.Addresses
                                  on o.AddressId equals a.Id
-                             join oi in context.OrderItems on o.Id equals oi.OrderId
-                             join p in context.Products on oi.ProductId equals p.Id into products
-                             from p in products.DefaultIfEmpty()
                              select new OrderDto()
                              {
                                  OrderId = o.Id,
@@ -72,6 +69,8 @@ namespace DataAccess.Concrate.EntityFramework
                                  ConfirmDate = o.ConfirmDate,
                                  OrdersItem = 
                                      ( from oi in context.OrderItems
+                                         join p in context.Products on oi.ProductId equals p.Id into products
+                                         from p in products.DefaultIfEmpty()
                                          where oi.OrderId == o.Id
                                          select new OrderItemDto()
                                          {
@@ -108,9 +107,6 @@ namespace DataAccess.Concrate.EntityFramework
                              where o.UserId == userId && o.State == state
                              join a in context.Addresses 
                                  on o.AddressId equals a.Id
-                             join oi in context.OrderItems on o.Id equals oi.OrderId
-                             join p in context.Products on oi.ProductId equals p.Id into products
-                             from p in products.DefaultIfEmpty()
                              select new OrderDto()
                              {
                                  OrderId = o.Id,
@@ -126,6 +122,8 @@ namespace DataAccess.Concrate.EntityFramework
                                  OrdersItem = 
                                      ( from oi in context.OrderItems
                                          where oi.OrderId == o.Id
+                                         join p in context.Products on oi.ProductId equals p.Id into products
+                                         from p in products.DefaultIfEmpty()
                                          select new OrderItemDto()
                                          {
                                              Id = oi.Id,
@@ -163,9 +161,6 @@ namespace DataAccess.Concrate.EntityFramework
                              where o.State == state
                              join a in context.Addresses
                                  on o.AddressId equals a.Id
-                             join oi in context.OrderItems on o.Id equals oi.OrderId
-                             join p in context.Products on oi.ProductId equals p.Id into products
-                             from p in products.DefaultIfEmpty()
                              select new OrderDto()
                              {
                                  OrderId = o.Id,
@@ -181,6 +176,8 @@ namespace DataAccess.Concrate.EntityFramework
                                  OrdersItem = 
                                      ( from oi in context.OrderItems
                                          where oi.OrderId == o.Id
+                                         join p in context.Products on oi.ProductId equals p.Id into products
+                                         from p in products.DefaultIfEmpty()
                                          select new OrderItemDto()
                                          {
                                              Id = oi.Id,
@@ -231,9 +228,6 @@ namespace DataAccess.Concrate.EntityFramework
                 var result = from o in context.Orders
                              join a in context.Addresses
                                  on o.AddressId equals a.Id
-                             join oi in context.OrderItems on o.Id equals oi.OrderId
-                             join p in context.Products on oi.ProductId equals p.Id into products
-                             from p in products.DefaultIfEmpty()
                              select new OrderDto()
                              {
                                  OrderId = o.Id,
@@ -249,6 +243,8 @@ namespace DataAccess.Concrate.EntityFramework
                                  OrdersItem = 
                                      ( from oi in context.OrderItems
                                          where oi.OrderId == o.Id
+                                         join p in context.Products on oi.ProductId equals p.Id into products
+                                         from p in products.DefaultIfEmpty()
                                          select new OrderItemDto()
                                          {
                                              Id = oi.Id,
@@ -285,15 +281,14 @@ namespace DataAccess.Concrate.EntityFramework
             {
                 var result = from o in context.Orders
                              join u in context.Users on o.UserId equals u.Id
-                             join oi in context.OrderItems on o.Id equals oi.OrderId
-                             join p in context.Products on oi.ProductId equals p.Id into products
-                             from p in products.DefaultIfEmpty()
                              select new OrderSimpleDto()
                              {
                                  Id = o.Id,
                                  State = o.State,
                                  OrdersItem = (from oi in context.OrderItems
                                                where oi.OrderId == o.Id
+                                               join p in context.Products on oi.ProductId equals p.Id into products
+                                               from p in products.DefaultIfEmpty()
                                                select new OrderItemDto
                                                {
                                                    Id = oi.Id,
