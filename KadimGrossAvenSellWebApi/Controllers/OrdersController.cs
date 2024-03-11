@@ -113,16 +113,16 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("CompleteOrderForPaytr")] //for paytr
+        [HttpPost("CompleteOrder")]
         [Consumes("application/x-www-form-urlencoded", "application/json")]
         public async Task<IActionResult> CompleteOrderForPaytr()
         {
-            //
-            // var formData = HttpContext.Request.Form;
-            // var paytrWebHookDto = new PaytrWebHookDto();
-            // paytrWebHookDto.merchant_oid = formData["merchant_oid"];
-            // paytrWebHookDto.status = formData["status"];
-            // _orderService.OrderComplate(paytrWebHookDto);
+            var formData = HttpContext.Request.Form;
+            var paytrWebHookDto = new PaytrWebHookDto();
+            paytrWebHookDto.merchant_oid = formData["merchant_oid"];
+            paytrWebHookDto.status = formData["status"];
+
+            _orderService.OrderComplateForPaytr(paytrWebHookDto);
             return Ok("OK");
         }
 

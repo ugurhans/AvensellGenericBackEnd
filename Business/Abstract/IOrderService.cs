@@ -36,6 +36,7 @@ namespace Business.Abstract
 
         IResult Update(OrderUpdateDto order);
 
+        IResult OrderComplateForPaytr(PaytrWebHookDto paytrWebHookDto);
     }
 }
 

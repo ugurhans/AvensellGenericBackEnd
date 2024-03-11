@@ -710,5 +710,50 @@ namespace Business.Concrete
            
         }
 
+        public IResult OrderComplateForPaytr(PaytrWebHookDto paytrWebHookDto)
+        {
+            var order = _orderDal.Get(x => x.Id.ToString() == paytrWebHookDto.merchant_oid);
+            if (order == null)
+            {
+                var newLogErr = new PaytrLog()
+                {
+                    ContentMessage = paytrWebHookDto.status,
+                    OrderId = order.Id,
+                    RequestDate = DateTime.Now,
+                    UserId = order.UserId,
+                    Success = false,
+                    ErrorType = ErrorTypes.PayTr_Error,
+
+                };
+                _paytrLogDal.Add(newLogErr);
+                return new ErrorResult();
+            }
+            if (paytrWebHookDto.status == "failed")
+            {
+                var errLog = new PaytrLog()
+                {
+                    ContentMessage = paytrWebHookDto.failed_reason_code + " : " + paytrWebHookDto.status,
+                    OrderId = order.Id,
+                    RequestDate = DateTime.Now,
+                    UserId = order.UserId,
+                    Success = true,
+                };
+                _paytrLogDal.Add(errLog);
+                return new ErrorResult();
+            }
+            order.State = OrderStates.APPROVED;
+            order.PaymentApprovedDate = DateTime.Now;
+            var newLog = new PaytrLog()
+            {
+                ContentMessage = paytrWebHookDto.status,
+                OrderId = order.Id,
+                RequestDate = DateTime.Now,
+                UserId = order.UserId,
+                Success = true,
+            };
+            _paytrLogDal.Add(newLog);
+            _orderDal.Update(order);
+            return new SuccessResult();
+        }
     }
 }
