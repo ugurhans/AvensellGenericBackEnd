@@ -39,6 +39,7 @@ namespace DataAccess.Concrate.EntityFramework
                         TotalOrderPaidPrice = grouped.Key.TotalOrderPaidPrice,
                         OrdersItem = grouped.Select(item => new OrderItemDtoBasic
                         {
+                            ProductId = item.p.Id,
                             ProductName = item.p.Name,
                             ImageUrl = item.p.ImageUrl
                         }).ToList()
