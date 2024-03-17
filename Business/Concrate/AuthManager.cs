@@ -97,7 +97,7 @@ namespace Business.Concrete
             }
 
             var otpResult = CheckOtpCode(userForLoginDto.OtpCode, userToCheck.Id);
-            if (otpResult.Success)
+            if (!otpResult.Success)
             {
                 return new ErrorDataResult<UserDto>(otpResult.Message);
             }
