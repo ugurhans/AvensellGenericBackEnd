@@ -75,6 +75,9 @@ namespace Business.Concrete
                 {
                     return new ErrorResult("Kod Hatalı");
                 }
+
+                code.Verified = true;
+                _mailOtpCodeDal.Update(code);
                 return new SuccessResult("Doğrulama Başarılı");
             }
             return new ErrorResult("Kod Bulunamadı");
@@ -98,6 +101,7 @@ namespace Business.Concrete
             {
                 return new ErrorDataResult<UserDto>(otpResult.Message);
             }
+            
             return new SuccessDataResult<UserDto>(userToCheck, "Giriş Başarıyla Sağlandı.");
         }
 
