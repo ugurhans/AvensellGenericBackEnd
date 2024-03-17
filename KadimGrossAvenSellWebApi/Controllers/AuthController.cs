@@ -58,7 +58,18 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("SendOtpCode")]
+        public async Task<ActionResult> SendOtpCode(string mail)
+        {
+          
+            var result = await _authService.SendOtpMail(mail);
 
+            if (result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+            return Ok(result.Message);
+        }
 
         [HttpPost("SendPasswordResetMail")]
         public async Task<ActionResult> SendPasswordResetMail(string userMail)

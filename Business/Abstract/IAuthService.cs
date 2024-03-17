@@ -18,6 +18,9 @@ namespace Business.Abstract
         IDataResult<AdminDto> CreateAccessTokenAdmin(AdminDto admin);
         Task<IResult> SendPasswordResetMailAsync(string userMail);
         IResult ChangePassword(string userMail, string code, string newPassword);
+        
+        Task<IResult> SendOtpMail(string userMail);
+
     }
 }
 

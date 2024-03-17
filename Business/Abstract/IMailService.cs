@@ -8,6 +8,7 @@ namespace Business.Abstract
     {
         Task<IResult> SendLostEmailAsync(MailRequest mailRequest);
         Task<IResult> SendResetEmailAsync(MailRequest mailRequest);
+        Task<IResult> SendOtpMail(MailRequest mailRequest);
     }
 }
 

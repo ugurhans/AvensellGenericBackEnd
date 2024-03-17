@@ -109,6 +109,10 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfLiveChatFAQsDal>().As<ILiveChatFAQsDal>().SingleInstance();
             builder.RegisterType<LiveChatFAQsManager>().As<ILiveChatFAQsService>().SingleInstance();
 
+                    
+            builder.RegisterType<EfUserNotificationDal>().As<IUserNotificationDal>().SingleInstance();
+            
+            builder.RegisterType<EfNotificationDal>().As<INotificationDal>().SingleInstance();
 
             builder.RegisterType<ShopStuffManager>().As<IShopStuffService>().SingleInstance();
             builder.RegisterType<EfMarketVariablesDal>().As<IMarketVariablesDal>().SingleInstance();
@@ -141,7 +145,8 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfMarketSettingItemDal>().As<IMarketSettingItemDal>().SingleInstance();
 
             builder.RegisterType<EfCampaignCategoryPercentageDiscountItemDal>().As<ICampaignCategoryPercentageDiscountItemDal>().SingleInstance();
-            
+   
+            builder.RegisterType<EfMailOtpCodeDal>().As<IMailOtpCodeDal>().SingleInstance();
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();

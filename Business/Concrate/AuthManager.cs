@@ -11,6 +11,7 @@ using Entity.Concrate;
 using MimeKit;
 using System.Net.Mail;
 using Core.Entities.Dtos;
+using Entity.Request;
 
 namespace Business.Concrete
 {
@@ -23,10 +24,10 @@ namespace Business.Concrete
         private readonly IResetPasswordCodeDal _resetpasswordCodeDal;
         private readonly IMailService _mailService;
         private IAdminService _adminService;
+        private readonly IMailOtpCodeDal _mailOtpCodeDal;
 
 
-
-        public AuthManager(IUserOperationClaimsDal userOperationClaimsDal, ITokenHelper tokenHelper, IUserService userService, IResetPasswordCodeDal resetpasswordCodeDal, IMailService mailService, IAdminService adminService)
+        public AuthManager(IUserOperationClaimsDal userOperationClaimsDal, ITokenHelper tokenHelper, IUserService userService, IResetPasswordCodeDal resetpasswordCodeDal, IMailService mailService, IAdminService adminService, IMailOtpCodeDal mailOtpCodeDal)
         {
             _userOperationClaimsDal = userOperationClaimsDal;
             _tokenHelper = tokenHelper;
@@ -34,6 +35,7 @@ namespace Business.Concrete
             _resetpasswordCodeDal = resetpasswordCodeDal;
             _mailService = mailService;
             _adminService = adminService;
+            _mailOtpCodeDal = mailOtpCodeDal;
         }
 
         public IDataResult<UserDto> CreateAccessToken(UserDto user)
@@ -59,6 +61,26 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
+
+        private IResult CheckOtpCode(string otpCode, int userId)
+        {
+            var code = _mailOtpCodeDal.Get(otp=>otp.UserId == userId && otp.Verified == false);
+            if (code != null)
+            {
+                if (code.CreatedDate.AddSeconds(code.LifeTimeSecond) <  DateTime.Now)
+                {
+                    return new ErrorResult("Kod Artık Geçersiz");
+                }
+                else if  (code.OtpCode != otpCode)
+                {
+                    return new ErrorResult("Kod Hatalı");
+                }
+                return new SuccessResult("Doğrulama Başarılı");
+            }
+            return new ErrorResult("Kod Bulunamadı");
+
+        }
+        
         public IDataResult<UserDto> Login(UserForLoginDto userForLoginDto)
         {
             var userToCheck = _userService.GetByMailDto(userForLoginDto.Email);
@@ -69,6 +91,12 @@ namespace Business.Concrete
             if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
             {
                 return new ErrorDataResult<UserDto>(Messages.Error);
+            }
+
+            var otpResult = CheckOtpCode(userForLoginDto.OtpCode, userToCheck.Id);
+            if (otpResult.Success)
+            {
+                return new ErrorDataResult<UserDto>(otpResult.Message);
             }
             return new SuccessDataResult<UserDto>(userToCheck, "Giriş Başarıyla Sağlandı.");
         }
@@ -189,6 +217,34 @@ namespace Business.Concrete
 
         }
 
-       
+        public async Task<IResult> SendOtpMail(string userMail)
+        {
+            var user = _userService.GetByMail(userMail);
+            if (user != null)
+            {
+                var otps = _mailOtpCodeDal.GetAll(otp=>otp.UserId == user.Id && otp.Verified == false);
+                if (otps.Count > 0)
+                {
+                    foreach (var mailOtpCode in otps)
+                    {
+                        mailOtpCode.Verified = true;
+                        _mailOtpCodeDal.Update(mailOtpCode);
+                    }
+                }
+                var mailResult =  await _mailService.SendOtpMail(new MailRequest
+                {
+                    ToEmail = user.Email,
+                    Subject = "OtpCode",
+                    Body = "OtpCode"
+                });
+                if (mailResult.Success)
+                {
+                    return new SuccessResult(mailResult.Message);
+                }
+                return new ErrorResult(mailResult.Message);
+            }
+
+            return new ErrorResult("Kullanıcı Bulunamadı");
+        }
     }
 }
