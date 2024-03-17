@@ -137,7 +137,7 @@ namespace Business.Concrate
                 Random random = new Random();
                 var mailCode= random.Next(100000, 999999).ToString();
                
-                StrContent = StrContent.Replace("##PINNUMBER##", user.LostPin);
+                StrContent = StrContent.Replace("##PINNUMBER##", mailCode);
 
                 builder.HtmlBody = StrContent;
                 builder.TextBody = mailRequest.Body;
