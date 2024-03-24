@@ -12,6 +12,7 @@ namespace DataAccess.Abstract
 {
     public interface ISubCategoryDal : IEntityRepository<SubCategory>
     {
+        List<SubCategory> GetAllWithCategoryId(int categoryId);
         List<SubCategoryDto> GetAllDto();
         List<SubCategoryDto> GetAllDtoWithCategoryId(int categoyId);
         List<SubCategoryDto> SearchProductWithSubCategory(string searchString);

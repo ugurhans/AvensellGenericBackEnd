@@ -4,11 +4,8 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entity.Concrate;
 using Entity.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Business.Concrate
 {
@@ -48,10 +45,14 @@ namespace Business.Concrate
             return new SuccessDataResult<List<SubCategoryDto>>(_subCategoryDal.GetAllDtoWithCategoryId(categoyId));
         }
 
-        public IDataResult<List<SubCategory>> GetAllWithCategoryId(int categoyId)
+        public IDataResult<List<SubCategory>> GetAllWithCategoryId(int categoryId)
         {
-            return new SuccessDataResult<List<SubCategory>>(_subCategoryDal.GetAll(x => x.CategoryId == categoyId));
+            var subCategories = _subCategoryDal
+                .GetAllWithCategoryId(categoryId);
+
+            return new SuccessDataResult<List<SubCategory>>(subCategories);
         }
+
 
         public IDataResult<List<SubCategoryDto>> SearchProductWithSubCategory(string searchString)
         {

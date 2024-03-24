@@ -14,6 +14,20 @@ namespace DataAccess.Concrate.EntityFramework
 {
     public class EfSubCategoryDal : EfEntityRepositoryBase<SubCategory, AvenSellContext>, ISubCategoryDal
     {
+            
+            
+        public List<SubCategory> GetAllWithCategoryId(int categoryId)
+        {
+            using var context = new AvenSellContext();
+
+            var subCategories = context.SubCategories.Where(x => x.CategoryId == categoryId)
+                .Include(sc => sc.Products) 
+                .Where(sc => sc.Products != null && sc.Products.Any())
+                .ToList();
+
+            return subCategories;
+
+        }
         public List<SubCategoryDto> GetAllDto()
         {
             using var context = new AvenSellContext();
