@@ -13,9 +13,9 @@ namespace Entity.Dto
         public int BuildingNo { get; set; }
         public int Floor { get; set; }
         public string ApartmentNo { get; set; }
-        public string City { get; set; }
-        public string Country { get; set; }
-        public string Neighborhood { get; set; }
+        public int CityId { get; set; }
+        public int DistrictId { get; set; }
+        public int NeighborhoodId { get; set; }
         public string Phone { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }

@@ -147,7 +147,14 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfCampaignCategoryPercentageDiscountItemDal>().As<ICampaignCategoryPercentageDiscountItemDal>().SingleInstance();
    
             builder.RegisterType<EfMailOtpCodeDal>().As<IMailOtpCodeDal>().SingleInstance();
-
+            
+            
+            builder.RegisterType<CityManager>().As<ICityService>().SingleInstance();
+            builder.RegisterType<EfCityDal>().As<ICityDal>().SingleInstance();
+            builder.RegisterType<NeighborhoodManager>().As<INeighborhoodService>().SingleInstance();
+            builder.RegisterType<EfNeighborhoodDal>().As<INeighborhoodDal>().SingleInstance();
+            builder.RegisterType<DistrictManager>().As<IDistrictsService>().SingleInstance();
+            builder.RegisterType<EfDistrictDal>().As<IDistrictDal>().SingleInstance();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

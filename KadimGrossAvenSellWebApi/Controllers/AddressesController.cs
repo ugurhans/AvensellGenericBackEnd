@@ -1,11 +1,7 @@
 ﻿using Business.Abstract;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Entity.Concrete;
+using Entity.Entities;
 
 namespace WebAPI.Controllers
 {
@@ -14,10 +10,16 @@ namespace WebAPI.Controllers
     public class AddressesController : ControllerBase
     {
         IAddressService _addressesService;
+        private readonly ICityService _cityService;
+        private readonly IDistrictsService _districtsService;
+        private readonly INeighborhoodService _neighborhoodService;
 
-        public AddressesController(IAddressService addressesService)
+        public AddressesController(IAddressService addressesService, ICityService cityService, IDistrictsService districtsService, INeighborhoodService neighborhoodService)
         {
             _addressesService = addressesService;
+            _cityService = cityService;
+            _districtsService = districtsService;
+            _neighborhoodService = neighborhoodService;
         }
 
         [HttpGet("getall")]
@@ -85,5 +87,71 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
+        
+         [HttpGet("GetCity")]
+        public IActionResult GetCity(int cityId)
+        {
+            var getCity = _cityService.GetCity(cityId);
+
+            return Ok(getCity);
+        }
+
+        [HttpGet("GetAllCity")]
+        public IActionResult GetAllCity()
+        {
+            var getAllCity = _cityService.GetAllCityList();
+            return Ok(getAllCity);
+        }
+        [HttpPost("AddCity")]
+        public IActionResult CityAdd(City city)
+        {
+            var send = _cityService.Add(city);
+            return Ok(send);
+        }
+        [HttpGet("GetDistrict")]
+        public IActionResult GetDistrict(int districtId)
+        {
+            var getDistrict = _districtsService.GetDistrict(districtId);
+            return Ok(getDistrict);
+        }
+        [HttpGet("GetAllDistrict")]
+        public IActionResult GetAllDistrict(int cityId)
+        {
+            var getAllDistrict = _districtsService.GetAllDistricts(cityId);
+            return Ok(getAllDistrict);
+        }
+
+
+        [HttpPost("GetAllDistrictsWithCities")]
+        public IActionResult GetAllDistrictsWithCities(List<int> cities)
+        {
+            var getAllDistrict = _districtsService.GetAllDistrictsWithCities(cities);
+            return Ok(getAllDistrict);
+        }
+        [HttpPost("AddDistrict")]
+        public IActionResult AddDistrict(District district)
+        {
+            var send = _districtsService.Add(district);
+            return Ok(send);
+        }
+        [HttpGet("GetNeighborhood")]
+        public IActionResult GetNeighborhood(int neighborhoodId)
+        {
+            var getNeighborhood = _neighborhoodService.Get(neighborhoodId);
+            return Ok(getNeighborhood);
+        }
+        [HttpGet("GetAllNeighborhood")]
+        public IActionResult GetAllNeighborhood(int districtId)
+        {
+            var getAllNeighborhood = _neighborhoodService.GetAllByDistrict(districtId);
+            return Ok(getAllNeighborhood);
+        }
+        [HttpPost("AddNeighborhood")]
+        public IActionResult AddNeighborhood(Neighborhood neighborhood)
+        {
+            var send = _neighborhoodService.Add(neighborhood);
+            return Ok(send);
+        }
+        
     }
 }

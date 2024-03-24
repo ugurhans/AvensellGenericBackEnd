@@ -243,9 +243,9 @@ namespace Business.Concrete
                 });
                 if (mailResult.Success)
                 {
-                    return new SuccessResult(mailResult.Message);
+                    return mailResult;
                 }
-                return new ErrorResult(mailResult.Message);
+                return mailResult;
             }
 
             return new ErrorResult("Kullanıcı Bulunamadı");

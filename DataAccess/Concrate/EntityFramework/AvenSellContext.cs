@@ -12,6 +12,7 @@ using static Azure.Core.HttpHeader;
 using Entity.Dto;
 using Entity.Concrate.paytr;
 using DataAccess.Concrate.EntityFramework;
+using Entity.Entities;
 using Entity.Enum;
 
 namespace DataAccess.Concrete.EntityFramework
@@ -70,7 +71,9 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<CampaignSpecialDiscount> CampaignSpecialDiscounts { get; set; }
         public DbSet<CampaignGiftProduct> CampaignGiftProducts { get; set; }
 
-
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Neighborhood> Neighborhoods { get; set; }
+        public DbSet<District> Districts { get; set; }
 
         public DbSet<FAQs> FAQs { get; set; }
         public DbSet<LiveChatFAQs> LiveChatFAQs { get; set; }

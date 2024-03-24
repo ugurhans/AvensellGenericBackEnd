@@ -20,7 +20,7 @@ namespace Entity.Concrate
         public int Floor { get; set; }
         public string ApartmentNo { get; set; }
         public string City { get; set; }
-        public string Country { get; set; }
+        public string District { get; set; }
         public string Neighborhood { get; set; }
         public string Phone { get; set; }
         public string Latitude { get; set; }
