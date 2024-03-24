@@ -22,12 +22,12 @@ namespace DataAccess.Concrate.EntityFramework
                      OrderBy = c.OrderBy,
                      Name = c.Name,
                      ImageUrl = "https://kadimgross.com.tr/" + c.ImageUrl,
-                     SubCategories = c.SubCategories.Select(sc => new SubCategoryDto
+                     SubCategories = c.SubCategories.Where(sc => sc.Products != null && sc.Products
+                        .Any()).Select(sc => new SubCategoryDto
                      {
                          Id = sc.Id,
                          Name = sc.Name,
                          OrderBy = sc.OrderBy,
-
                      }).ToList()
                  }).ToList();
 
