@@ -40,17 +40,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetAllDtoByUserId")]
-        public IActionResult GetAllDtoByUserId(int userId)
-        {
-            var result = _userFavoriteService.GetByUserId(userId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
+        // [HttpGet("GetAllDtoByUserId")]
+        // public IActionResult GetAllDtoByUserId(int userId)
+        // {
+        //     var result = _userFavoriteService.GetByUserId(userId);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        // }
 
         [HttpPost("Add")]
         public IActionResult Add(UserFavorite favorite)

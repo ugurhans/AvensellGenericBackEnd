@@ -33,16 +33,16 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getSelectedAddress")]
-        public IActionResult GetSelectedAdress(int addressId)
-        {
-            var result = _addressesService.GetSelectedAddress(addressId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        // [HttpGet("getSelectedAddress")]
+        // public IActionResult GetSelectedAdress(int addressId)
+        // {
+        //     var result = _addressesService.GetSelectedAddress(addressId);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //     return BadRequest(result);
+        // }
 
         [HttpPost("Add")]
         public IActionResult Add(Address adress)

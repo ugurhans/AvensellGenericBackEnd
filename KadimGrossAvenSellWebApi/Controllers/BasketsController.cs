@@ -147,18 +147,18 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-
-        [HttpPost("ClearbasketCampaign")]
-        public IActionResult ClearbasketCampaign(int basketId)
-        {
-            var result = _basketService.ClearbasketCampaign(basketId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
+        //
+        // [HttpPost("ClearbasketCampaign")]
+        // public IActionResult ClearbasketCampaign(int basketId)
+        // {
+        //     var result = _basketService.ClearbasketCampaign(basketId);
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //
+        //     return BadRequest(result);
+        // }
 
         [HttpPost("DeleteAllBasket")]
         public IActionResult DeleteAllBasket(int basketId)

@@ -82,17 +82,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("SearchProduct")]
-        public IActionResult SearchProduct(string productName)
-        {
-            var result = _productService.SearchProduct(productName.ToLower());
-
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        // [HttpGet("SearchProduct")]
+        // public IActionResult SearchProduct(string productName)
+        // {
+        //     var result = _productService.SearchProduct(productName.ToLower());
+        //
+        //     if (result.Success)
+        //     {
+        //         return Ok(result);
+        //     }
+        //     return BadRequest(result);
+        // }
 
         [HttpGet("getalldto")]
         public IActionResult GetAllDto()
@@ -118,17 +118,17 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet("GetAllCampaignProducts")]
-        public IActionResult getAllCampaignProducts(int productCount)
-        {
-            var result = _productService.GetAllCampaignProducts(productCount);
-            if (result.Success)
-            {
-
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        // [HttpGet("GetAllCampaignProducts")]
+        // public IActionResult getAllCampaignProducts(int productCount)
+        // {
+        //     var result = _productService.GetAllCampaignProducts(productCount);
+        //     if (result.Success)
+        //     {
+        //
+        //         return Ok(result);
+        //     }
+        //     return BadRequest(result);
+        // }
 
         [HttpPost("GetRandomRecommendations")]
         public IActionResult GetRandomRecommendations(int ProductCount)
