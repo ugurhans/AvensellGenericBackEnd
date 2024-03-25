@@ -15,7 +15,8 @@ namespace DataAccess.Concrate.EntityFramework
             using var context = new AvenSellContext();
 
             var categories = context.Categories
-                 .Include(c => c.SubCategories)
+                 .Include(c => c.SubCategories.Where(sc => sc.Products != null && sc.Products
+                         .Any()))
                  .Select(c => new CategoryAndSubDto
                  {
                      Id = c.Id,
@@ -29,7 +30,7 @@ namespace DataAccess.Concrate.EntityFramework
                          Name = sc.Name,
                          OrderBy = sc.OrderBy,
                      }).ToList()
-                 }).ToList();
+                 })  .Where(cat => cat.SubCategories.Any()).ToList();
 
             return categories;
         }
@@ -57,7 +58,8 @@ namespace DataAccess.Concrate.EntityFramework
             using var context = new AvenSellContext();
 
             var categories = context.Categories
-                 .Include(c => c.SubCategories)
+                 .Include(c => c.SubCategories.Where(sc => sc.Products != null &&sc.Products.Count>0&& sc.Products
+                     .Any()))
                      .ThenInclude(sc => sc.Products)
                          .ThenInclude(p => p.Reviews)
                  .Include(c => c.SubCategories)
