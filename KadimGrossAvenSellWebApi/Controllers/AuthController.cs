@@ -66,9 +66,10 @@ namespace WebAPI.Controllers
 
             if (result.Success)
             {
-                return BadRequest(result);
+                return Ok(result);
+               
             }
-            return Ok(result);
+            return BadRequest(result);
         }
 
         [HttpPost("SendPasswordResetMail")]
