@@ -23,29 +23,31 @@ jobs:
     - name: Project publish
       run: dotnet publish -c Release AvenSellWebApi\AvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/AvenSellWebApi
 
-    - name: Deploy to IIS
-      run: |
-        if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Started")
+     - name: Deploy to IIS
+       run: |
+        if ((Get-WebSiteState -Name avensell-generic-back-end).Value -eq "Started")
         {
-            Stop-WebSite -Name kadimGross.site
-            echo "Stopped Website kadimGross.site"
+            Stop-WebSite -Name avensell-generic-back-end
+            echo "Stopped Website avensell-generic-back-end"
         }
-        if ((Get-WebAppPoolState -Name kadimGross.site).Value -eq "Started")
+        if ((Get-WebAppPoolState -Name avensell-generic-back-end).Value -eq "Started")
         {
-            Stop-WebAppPool -Name kadimGross.site
-            echo "Stopped Application Pool kadimGross.site"
+            Stop-WebAppPool -Name avensell-generic-back-end
+            echo "Stopped Application Pool avensell-generic-back-end"
         }
-        Start-Sleep -s 15        
-        Copy-Item ${{env.DOTNET_ROOT}}/AvenSellWebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
         
-        if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Stopped")
+        Start-Sleep -s 15        
+        Copy-Item ${{env.DOTNET_ROOT}}/WebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
+        
+        if ((Get-WebSiteState -Name avensell-generic-back-end).Value -eq "Stopped")
         {
-            Start-WebSite -Name kadimGross.site
-            echo "Started Website kadimGross.site"
+            Start-WebSite -Name avensell-generic-back-end
+            echo "Started Website avensell-generic-back-end"
         }
-        if ((Get-WebAppPoolState -Name kadimGross.site).Value -eq "Stopped")
+        if ((Get-WebAppPoolState -Name avensell-generic-back-end).Value -eq "Stopped")
         {
-            Start-WebAppPool -Name kadimGross.site
-            echo "Started Application Pool kadimGross.site"
+            Start-WebAppPool -Name avensell-generic-back-end
+            echo "Started Application Pool avensell-generic-back-end"
         }
+        
         if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
