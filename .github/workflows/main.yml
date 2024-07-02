@@ -18,10 +18,10 @@ jobs:
         dotnet-version: '7.0.x'
 
     - name: Build with dotnet
-      run: dotnet build KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj --configuration Release
+      run: dotnet build AvenSellWebApi\AvenSellWebApi.csproj --configuration Release
 
     - name: Project publish
-      run: dotnet publish -c Release KadimGrossAvenSellWebApi\KadimGrossAvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi
+      run: dotnet publish -c Release AvenSellWebApi\AvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/AvenSellWebApi
 
     - name: Deploy to IIS
       run: |
@@ -36,7 +36,7 @@ jobs:
             echo "Stopped Application Pool kadimGross.site"
         }
         Start-Sleep -s 15        
-        Copy-Item ${{env.DOTNET_ROOT}}/KadimGrossAvenSellWebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
+        Copy-Item ${{env.DOTNET_ROOT}}/AvenSellWebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
         
         if ((Get-WebSiteState -Name kadimGross.site).Value -eq "Stopped")
         {
