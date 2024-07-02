@@ -23,8 +23,8 @@ jobs:
     - name: Project publish
       run: dotnet publish -c Release AvenSellWebApi\AvenSellWebApi.csproj -o ${{env.DOTNET_ROOT}}/AvenSellWebApi
 
-     - name: Deploy to IIS
-       run: |
+    - name: Deploy to IIS
+      run: |
         if ((Get-WebSiteState -Name avensell-generic-back-end).Value -eq "Started")
         {
             Stop-WebSite -Name avensell-generic-back-end
