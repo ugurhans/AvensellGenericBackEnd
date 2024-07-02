@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Business.Abstract;
-using Core.Utilities.Results;
+﻿using Business.Abstract;
 using Entity.Concrate;
-using Entity.Dto;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AvenSellWebApi.Controllers
 {
@@ -23,7 +15,7 @@ namespace AvenSellWebApi.Controllers
             _brandService = brandService;
         }
 
-        [HttpGet("getall")]
+        [HttpGet("GetAll")]
         public IActionResult GetAll()
         {
             var result = _brandService.GetAll();
@@ -45,7 +37,7 @@ namespace AvenSellWebApi.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("add")]
+        [HttpPost("Add")]
         public IActionResult Add(Brand brand)
         {
             var result = _brandService.Add(brand);
