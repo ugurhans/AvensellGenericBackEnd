@@ -1,5 +1,4 @@
-﻿using System;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 using Entity.Concrate;
 using Entity.Dto;
 
@@ -7,10 +6,10 @@ namespace Business.Abstract
 {
     public interface ICategoryService
     {
-        IDataResult<List<CategoryAndSubDto>> GetallCategoryAndSubCategoriesDto();
-        IDataResult<List<CategoryDtoWithSubAndProduct>> GetAllDto();
-        IDataResult<List<CategorySimpleDto>> GetAllSimpleDtoDto();
-        IResult Add(Category category);
+       public IDataResult<List<CategoryAndSubDto>> GetallCategoryAndSubCategoriesDto();
+       public IDataResult<List<CategoryDtoWithSubAndProduct>> GetAllDto();
+       public IDataResult<List<CategorySimpleDto>> GetAllSimpleDtoDto();
+       public IResult Add(Category category);
 
 
 

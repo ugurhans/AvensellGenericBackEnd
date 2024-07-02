@@ -1,5 +1,4 @@
-﻿using System;
-using Business.Abstract;
+﻿using Business.Abstract;
 using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -10,7 +9,7 @@ namespace Business.Concrate
 {
     public class CategoryManager : ICategoryService
     {
-        ICategoryDal _categoryDal;
+        private readonly ICategoryDal _categoryDal;
         public CategoryManager(ICategoryDal categoryDal)
         {
             _categoryDal = categoryDal;

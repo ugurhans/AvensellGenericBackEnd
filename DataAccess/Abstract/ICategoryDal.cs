@@ -1,5 +1,4 @@
-﻿using System;
-using Core.DataAccess;
+﻿using Core.DataAccess;
 using Entity.Concrate;
 using Entity.Dto;
 
@@ -7,9 +6,9 @@ namespace DataAccess.Abstract
 {
     public interface ICategoryDal : IEntityRepository<Category>
     {
-        List<CategoryAndSubDto> GetallCategoryAndSubCategoriesDto();
-        List<CategorySimpleDto> GetAllSimpleDtoDto();
-        List<CategoryDtoWithSubAndProduct> GetDto();
+        public List<CategoryAndSubDto> GetallCategoryAndSubCategoriesDto();
+        public List<CategorySimpleDto> GetAllSimpleDtoDto();
+        public List<CategoryDtoWithSubAndProduct> GetDto();
     }
 }
 

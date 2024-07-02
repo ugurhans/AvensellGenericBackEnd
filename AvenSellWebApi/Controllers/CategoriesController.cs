@@ -1,29 +1,21 @@
 ﻿using Business.Abstract;
-
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-using Entity.Concrate;
-
-namespace WebAPI.Controllers
+namespace AvenSellWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        ICategoryService _categoryService;
+        private readonly ICategoryService _categoryService;
 
         public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAll()
+        [HttpGet("GetAllDto")]
+        public IActionResult GetAllDto()
         {
             var result = _categoryService.GetAllDto();
             if (result.Success)
@@ -33,8 +25,8 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getallDto")]
-        public IActionResult GetallDto()
+        [HttpGet("GetAllSimpleDtoDto")]
+        public IActionResult GetAllSimpleDtoDto()
         {
             var result = _categoryService.GetAllSimpleDtoDto();
             if (result.Success)
@@ -45,8 +37,8 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet("getallCategoryAndSubCategories")]
-        public IActionResult GetallCategoryAndSubCategories()
+        [HttpGet("GetallCategoryAndSubCategoriesDto")]
+        public IActionResult GetallCategoryAndSubCategoriesDto()
         {
             var result = _categoryService.GetallCategoryAndSubCategoriesDto();
             if (result.Success)
