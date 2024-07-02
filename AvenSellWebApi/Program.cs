@@ -46,29 +46,13 @@ var app = builder.Build();
 app.UseCors(x => x.AllowAnyHeader()
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithOrigins("http://188.132.247.40", "https://www.kadimgross.com.tr", "http://78.188.223.33", "http://192.168.1.195:3000", "http://localhost:3000", "http://85.107.90.169:3000", "http://192.168.1.108:3000", "http://188.132.247.54:3000", "http://192.168.1.195:3000", "http://localhost:3000", "http://85.107.90.169:3000", "http://192.168.1.108:3000", "http://78.188.223.33:3000", "http://188.132.247.101:3000"));
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "AvenSellApi v1");
-    });
-}
-else
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("https://kadimgross.com.tr/avenSellGenericService/swagger/v1/swagger.json", "AvenSellApi v1");
-    });
+            .AllowAnyOrigin());
 
 
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
