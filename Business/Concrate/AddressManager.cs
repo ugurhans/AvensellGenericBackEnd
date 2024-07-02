@@ -2,10 +2,6 @@
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entity.Concrete;
-using Entity.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Business.Constants;
 using Entity.Dto;
 
@@ -13,28 +9,34 @@ namespace Business.Concrete
 {
     public class AddressManager : IAddressService
     {
-        IAddressDal _adressDal;
+        private readonly IAddressDal _addressDal;
 
         public AddressManager(IAddressDal adressDal)
         {
-            _adressDal = adressDal;
+            _addressDal = adressDal;
         }
 
-        public IDataResult<List<AddressDto>> GetAll(int userId)
+        public IDataResult<List<AddressDto>> GetAllByUserId(int userId)
         {
-            return new SuccessDataResult<List<AddressDto>>(_adressDal.GetAllAdresses(userId));
+            return new SuccessDataResult<List<AddressDto>>(_addressDal.GetAllByUserId(userId));
         }
 
-        public IDataResult<Address> GetSelectedAddress(int addressId)
+
+        public IDataResult<Address> GetById(int addressId)
         {
-            return new SuccessDataResult<Address>(_adressDal.Get(a => a.Id == addressId));
+            return new SuccessDataResult<Address>(_addressDal.Get(x => x.Id == addressId));
+        }
+        public IDataResult<List<CityTable>> GetAllCity()
+        {
+            return new SuccessDataResult<List<CityTable>>(_addressDal.GetAllCity());
+
         }
 
         public IResult Add(Address address)
         {
             address.DateCreated = DateTime.Now;
             address.IsActive = true;
-            _adressDal.Add(address);
+            _addressDal.Add(address);
 
             return new SuccessResult(Messages.Added);
         }
@@ -42,26 +44,33 @@ namespace Business.Concrete
         public IResult Update(Address address)
         {
             address.DateModified = DateTime.Now;
-            _adressDal.Update(address);
+            _addressDal.Update(address);
             return new SuccessResult(Messages.Updated);
+        }
+
+
+        public IResult Delete(int id)
+        {
+            _addressDal.Delete(id);
+            return new SuccessResult(Messages.Deleted);
         }
 
         public IResult SetIsActive(int id)
         {
-            var address = _adressDal.Get(x => x.Id == id);
+            var address = _addressDal.Get(x => x.Id == id);
             if (address != null)
             {
                 if (address.IsActive == false)
                 {
                     address.DateModified = DateTime.Now;
                     address.IsActive = true;
-                    _adressDal.Update(address);
+                    _addressDal.Update(address);
                     return new SuccessResult("Adres Aktifleştirildi");
 
                 }
                 address.DateModified = DateTime.Now;
                 address.IsActive = false;
-                _adressDal.Update(address);
+                _addressDal.Update(address);
                 return new SuccessResult("Adres Listeden Kaldırıldı.");
             }
             else
@@ -71,10 +80,22 @@ namespace Business.Concrete
 
         }
 
-        public IResult Delete(int id)
+        public IDataResult<List<DistrictTable>> GetAllDistrictWithCityId(int cityId)
         {
-            _adressDal.Delete(id);
-            return new SuccessResult(Messages.Deleted);
+            return new SuccessDataResult<List<DistrictTable>>(_addressDal.GetAllDistrictWithCityId(cityId));
         }
+
+        public IDataResult<List<MuhitTable>> GetAllMuhitWithDistrictId(int districtId)
+        {
+            return new SuccessDataResult<List<MuhitTable>>(_addressDal.GetAllMuhitWithDistrictId(districtId));
+
+        }
+
+        public IDataResult<List<NeighbourhoodTable>> GetAllNeighbourhoodWithMuhitId(int muhitId)
+        {
+            return new SuccessDataResult<List<NeighbourhoodTable>>(_addressDal.GetAllNeighbourhoodWithMuhitId(muhitId));
+
+        }
+
     }
 }

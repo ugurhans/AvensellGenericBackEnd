@@ -1,7 +1,6 @@
 ﻿using Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Entity.Concrete;
-using Entity.Entities;
 
 namespace WebAPI.Controllers
 {
@@ -10,22 +9,16 @@ namespace WebAPI.Controllers
     public class AddressesController : ControllerBase
     {
         private readonly IAddressService _addressesService;
-        private readonly ICityService _cityService;
-        private readonly IDistrictsService _districtsService;
-        private readonly INeighborhoodService _neighborhoodService;
 
-        public AddressesController(IAddressService addressesService, ICityService cityService, IDistrictsService districtsService, INeighborhoodService neighborhoodService)
+        public AddressesController(IAddressService addressesService)
         {
             _addressesService = addressesService;
-            _cityService = cityService;
-            _districtsService = districtsService;
-            _neighborhoodService = neighborhoodService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAll(int userId) //bir kullanicinin tum adresleri
+        [HttpGet("GetAllByUserId")]
+        public IActionResult GetAllByUserId(int userId)
         {
-            var result = _addressesService.GetAll(userId);
+            var result = _addressesService.GetAllByUserId(userId);
             if (result.Success)
             {
                 return Ok(result);
@@ -33,21 +26,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        // [HttpGet("getSelectedAddress")]
-        // public IActionResult GetSelectedAdress(int addressId)
-        // {
-        //     var result = _addressesService.GetSelectedAddress(addressId);
-        //     if (result.Success)
-        //     {
-        //         return Ok(result);
-        //     }
-        //     return BadRequest(result);
-        // }
-
         [HttpPost("Add")]
-        public IActionResult Add(Address adress)
+        public IActionResult Add(Address address)
         {
-            var result = _addressesService.Add(adress);
+            var result = _addressesService.Add(address);
             if (result.Success)
             {
                 return Ok(result);
@@ -56,9 +38,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("Update")]
-        public IActionResult Update(Address adress)
+        public IActionResult Update(Address address)
         {
-            var result = _addressesService.Update(adress);
+            var result = _addressesService.Update(address);
             if (result.Success)
             {
                 return Ok(result);
@@ -87,71 +69,49 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
-        
-         [HttpGet("GetCity")]
-        public IActionResult GetCity(int cityId)
-        {
-            var getCity = _cityService.GetCity(cityId);
-
-            return Ok(getCity);
-        }
 
         [HttpGet("GetAllCity")]
         public IActionResult GetAllCity()
         {
-            var getAllCity = _cityService.GetAllCityList();
-            return Ok(getAllCity);
-        }
-        [HttpPost("AddCity")]
-        public IActionResult CityAdd(City city)
-        {
-            var send = _cityService.Add(city);
-            return Ok(send);
-        }
-        [HttpGet("GetDistrict")]
-        public IActionResult GetDistrict(int districtId)
-        {
-            var getDistrict = _districtsService.GetDistrict(districtId);
-            return Ok(getDistrict);
-        }
-        [HttpGet("GetAllDistrict")]
-        public IActionResult GetAllDistrict(int cityId)
-        {
-            var getAllDistrict = _districtsService.GetAllDistricts(cityId);
-            return Ok(getAllDistrict);
+            var result = _addressesService.GetAllCity();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
+        [HttpGet("GetAllDistrictWithCityId")]
+        public IActionResult GetAllDistrictWithCityId(int cityId)
+        {
+            var result = _addressesService.GetAllDistrictWithCityId(cityId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
 
-        [HttpPost("GetAllDistrictsWithCities")]
-        public IActionResult GetAllDistrictsWithCities(List<int> cities)
+        [HttpGet("GetAllMuhitWithDistrictId")]
+        public IActionResult GetAllMuhitWithDistrictId(int districtId)
         {
-            var getAllDistrict = _districtsService.GetAllDistrictsWithCities(cities);
-            return Ok(getAllDistrict);
+            var result = _addressesService.GetAllMuhitWithDistrictId(districtId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
-        [HttpPost("AddDistrict")]
-        public IActionResult AddDistrict(District district)
+
+        [HttpGet("GetAllNeighbourhoodWithMuhitId")]
+        public IActionResult GetAllNeighbourhoodWithMuhitId(int muhitId)
         {
-            var send = _districtsService.Add(district);
-            return Ok(send);
+            var result = _addressesService.GetAllNeighbourhoodWithMuhitId(muhitId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
-        [HttpGet("GetNeighborhood")]
-        public IActionResult GetNeighborhood(int neighborhoodId)
-        {
-            var getNeighborhood = _neighborhoodService.Get(neighborhoodId);
-            return Ok(getNeighborhood);
-        }
-        [HttpGet("GetAllNeighborhood")]
-        public IActionResult GetAllNeighborhood(int districtId)
-        {
-            var getAllNeighborhood = _neighborhoodService.GetAllByDistrict(districtId);
-            return Ok(getAllNeighborhood);
-        }
-        [HttpPost("AddNeighborhood")]
-        public IActionResult AddNeighborhood(Neighborhood neighborhood)
-        {
-            var send = _neighborhoodService.Add(neighborhood);
-            return Ok(send);
-        }
-        
     }
 }

@@ -294,7 +294,7 @@ namespace Business.Concrete
             newOrder.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (marketSetting?.DeliveryFee);
             newOrder.ConfirmDate = null;
 
-            var address = _addressService.GetSelectedAddress(order.AddressId).Data;
+            var address = _addressService.GetById(order.AddressId).Data;
             _orderDal.Add(newOrder);
 
             if (address != null)
@@ -546,7 +546,7 @@ namespace Business.Concrete
             Console.WriteLine(existingOrder);
             if (existingOrder != null)
             {
-                var selectedAddressResult = _addressService.GetSelectedAddress(order.AddressId).Data;
+                var selectedAddressResult = _addressService.GetById(order.AddressId).Data;
                 var newOrder = new Order()
                 {
                     Id = order.OrderId,
@@ -569,7 +569,7 @@ namespace Business.Concrete
                 order.ConfirmDate = null;
 
 
-                var address = _addressService.GetSelectedAddress(order.AddressId).Data;
+                var address = _addressService.GetById(order.AddressId).Data;
                 _orderDal.Update(newOrder);
 
                 if (address != null)

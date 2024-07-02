@@ -1,19 +1,11 @@
 ﻿using Core.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Entity.Concrate;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using Microsoft.EntityFrameworkCore.SqlServer;
 using Entity.Concrete;
-using static Azure.Core.HttpHeader;
 using Entity.Dto;
 using Entity.Concrate.paytr;
-using DataAccess.Concrate.EntityFramework;
 using Entity.Entities;
-using Entity.Enum;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -56,7 +48,7 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<UserCoupon> UserCoupons { get; set; }
         public DbSet<CouponProduct> couponProducts { get; set; }
         public DbSet<CouponCategory> couponCategories { get; set; }
-        public DbSet<CouponTimed>  couponTimeds { get; set; }
+        public DbSet<CouponTimed> couponTimeds { get; set; }
 
 
         public DbSet<Order> Orders { get; set; }
@@ -75,6 +67,12 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Neighborhood> Neighborhoods { get; set; }
         public DbSet<District> Districts { get; set; }
 
+        public DbSet<CityTable> CityTable { get; set; }
+        public DbSet<DistrictTable> DistrictTable { get; set; }
+        public DbSet<MuhitTable> MuhitTable { get; set; }
+        public DbSet<NeighbourhoodTable> NeighbourhoodTable { get; set; }
+
+
         public DbSet<FAQs> FAQs { get; set; }
         public DbSet<LiveChatFAQs> LiveChatFAQs { get; set; }
         public DbSet<UserPermission> UserPermissions { get; set; }
@@ -83,7 +81,7 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<OrderContactInfo> OrderContactInfos { get; set; }
         public DbSet<PaytrLog> PaytrLogs { get; set; }
         public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
-        public DbSet<Admin>Admins { get; set; }
+        public DbSet<Admin> Admins { get; set; }
 
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Thema> Themas { get; set; }
@@ -91,10 +89,10 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<MarketSetting> MarketSettings { get; set; }
 
         public DbSet<MarketSettingItem> marketSettingItems { get; set; }
-         
+
         public DbSet<CampaignCategoryPercentageDiscountItem> campaignCategoryPercentageDiscountItems { get; set; }
-        
-        
+
+
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<UserNotification> UserNotifications { get; set; }
 
