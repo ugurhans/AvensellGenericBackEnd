@@ -6,9 +6,9 @@ namespace Business.Abstract
 {
     public interface IBasketBoxesService
     {
-        IDataResult<BasketCheckBoxTypeDto>? GetBoxes();
-        IResult UpdateBoxes(BasketCheckBoxTypeDto basketCheckBoxes);
-        decimal GetBasketPrice(int userId);//
+        public IDataResult<BasketCheckBoxTypeDto> GetBoxes();
+        public IResult UpdateBoxes(BasketCheckBoxTypeDto basketCheckBoxes);
+        public decimal GetBasketPrice(int userId);
     }
 }
 

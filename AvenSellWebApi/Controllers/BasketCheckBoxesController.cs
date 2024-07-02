@@ -22,10 +22,9 @@ namespace AvenSellWebApi.Controllers
         }
 
         [HttpGet("GetBoxes")]
-        public IActionResult GetDetailByUserId()
+        public IActionResult GetBoxes()
         {
             var result = _basketBoxesService.GetBoxes();
-
             if (result.Success)
             {
                 return Ok(result);

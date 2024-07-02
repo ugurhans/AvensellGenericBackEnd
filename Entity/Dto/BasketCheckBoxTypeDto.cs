@@ -7,11 +7,11 @@ namespace Entity.Dto
 {
     public class BasketCheckBoxTypeDto : IDto
     {
-        public List<PaymentType> Payment { get; set; }
-        public OnlinePayment OnlinePayment { get; set; }
-        public EmptyDelivery EmptyDelivery { get; set; }
-        public List<Delivery> Delivery { get; set; }
-        public MarketVariable MarketVariables { get; set; }
+        public List<PaymentType>? Payment { get; set; }
+        public OnlinePayment? OnlinePayment { get; set; }
+        public EmptyDelivery? EmptyDelivery { get; set; }
+        public List<Delivery>? Delivery { get; set; }
+        public MarketVariable? MarketVariables { get; set; }
     }
 
     public class PaymentType : IEntity
