@@ -18,7 +18,7 @@ namespace Business.Concrete
 {
     public class OrderManager : IOrderService
     {
-       
+
         IOrderDal _orderDal;
         IBasketService _basketService;
         IOrderItemService _orderItemService;
@@ -81,8 +81,8 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OrderDto>>(_orderDal.GetOrderDetails(orderıd));
         }
 
-  
-       public IDataResult<List<OrderBasicDto>> GetOrderBasicByUserId(int UserId)
+
+        public IDataResult<List<OrderBasicDto>> GetOrderBasicByUserId(int UserId)
         {
             return new SuccessDataResult<List<OrderBasicDto>>(_orderDal.GetOrderDetailBasic(UserId));
         }
@@ -212,26 +212,26 @@ namespace Business.Concrete
             if (user == null)
                 return new ErrorResult("User Not Found");
             var basket = _basketService.GetDetailByUserId(user.Id).Data;
-            if(basket == null)
+            if (basket == null)
                 return new ErrorResult("Basket Not Found");
-            var marketSetting = _marketSettingDal.GetAll(x=>x.DeliveryFee != null).FirstOrDefault();
-            if(marketSetting == null)
-                return new ErrorResult("Market Settings Not Found");   
-            
+            var marketSetting = _marketSettingDal.GetAll(x => x.DeliveryFee != null).FirstOrDefault();
+            if (marketSetting == null)
+                return new ErrorResult("Market Settings Not Found");
+
             var priceLast = _basketBoxesService.GetBasketPrice(basket.UserId.Value);
             if (basket.BasketItems.Count < 1)
                 return new ErrorResult("Sipariş oluşturmak için sepetinizde ürün bulunmalı.");
-            
+
             var newOrder = new Order()
             {
                 UserId = order.UserId,
-                BasketId=basket.BasketId,
+                BasketId = basket.BasketId,
                 TotalOrderDiscount = basket.TotalBasketDiscount,
                 TotalOrderPrice = basket.TotalBasketPrice,
                 TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (marketSetting.DeliveryFee),
                 OrderDate = DateTime.Now,
                 State = OrderStates.UNAPPROVED,
-                ConfirmDate = null, 
+                ConfirmDate = null,
                 CompletedDate = null,
                 PaymentType = order.PaymentType,
                 IsCampaignApplied = basket.IsCampaignApplied,
@@ -241,7 +241,7 @@ namespace Business.Concrete
                 AddressId = order.AddressId,
                 DeliveryFee = (marketSetting?.DeliveryFee)
             };
-         
+
             if (basket.IsCampaignApplied == true && basket.CampaignId != null)
             {
                 IDataResult<BasketDetailDto> campaignResult = null;
@@ -293,20 +293,20 @@ namespace Business.Concrete
             newOrder.TotalOrderPrice = basket.TotalBasketPrice;
             newOrder.TotalOrderPaidPrice = basket.TotalBasketPaidPrice + (marketSetting?.DeliveryFee);
             newOrder.ConfirmDate = null;
-            
-          var address = _addressService.GetSelectedAddress(order.AddressId).Data;
+
+            var address = _addressService.GetSelectedAddress(order.AddressId).Data;
             _orderDal.Add(newOrder);
 
             if (address != null)
             {
-            
+
                 var newContact = new OrderContactInfo()
                 {
-                    City =_cityDal.Get(x=>x.Id == address.CityId).Name,
+                    City = _cityDal.Get(x => x.Id == address.CityId).Name,
                     Header = address.Header,
                     Desc = address.Desc,
                     IsActive = address.IsActive,
-                    District = _districtDal.Get(x=>x.Id == address.DistrictId).Name,
+                    District = _districtDal.Get(x => x.Id == address.DistrictId).Name,
                     Latitude = address.Latitude,
                     Longitude = address.Longitude,
                     PostalCode = address.PostalCode,
@@ -315,19 +315,20 @@ namespace Business.Concrete
                     ApartmentNo = address.ApartmentNo,
                     DateCreated = DateTime.Now,
                     Floor = address.Floor,
-                    Neighborhood = _neighborhoodDal.Get(x=>x.Id == address.NeighborhoodId).Name,
+                    Neighborhood = _neighborhoodDal.Get(x => x.Id == address.NeighborhoodId).Name,
                     Phone = address.Phone,
                     DateModified = null,
                     AddressesId = address.Id,
                     UserId = address.UserId,
+                    //muhit gelecek
                 };
 
                 _orderContactInfoDal.Add(newContact);
                 newOrder.OrderContactId = newContact.Id;
                 _orderDal.Update(newOrder);
-          
+
             }
-         
+
             foreach (var item in basket.BasketItems)
             {
                 var orderItem = new OrderItem
@@ -372,7 +373,7 @@ namespace Business.Concrete
                     PaymentAmount = (decimal)priceLast * 100,
                     MerchantOid = newOrder.Id.ToString(),
                     UserName = user.FirstName + " " + user.LastName,
-                    UserAddress = address.BuildingNo + " " + address.ApartmentNo + " " + address.Floor + " " +  _districtDal.Get(x=>x.Id == address.NeighborhoodId).Name+ " " +_districtDal.Get(x=>x.Id == address.DistrictId).Name + " " + _districtDal.Get(x=>x.Id == address.CityId).Name,
+                    UserAddress = address.BuildingNo + " " + address.ApartmentNo + " " + address.Floor + " " + _districtDal.Get(x => x.Id == address.NeighborhoodId).Name + " " + _districtDal.Get(x => x.Id == address.DistrictId).Name + " " + _districtDal.Get(x => x.Id == address.CityId).Name,
                     UserPhone = "+" + user.PhoneNumber,
                     MerchantOkUrl = "http://admin.titiztürkiye.com/pages/paymentSuccess.html",
                     MerchantFailUrl = "http://admin.titiztürkiye.com/pages/paymentReject.html",
@@ -428,7 +429,7 @@ namespace Business.Concrete
                 return new ErrorResult();
             }
             order.State = OrderStates.APPROVED;
-            order.PaymentApprovedDate = DateTime.Now; 
+            order.PaymentApprovedDate = DateTime.Now;
             var newLog = new PaytrLog()
             {
                 ContentMessage = paytrWebHookDto.status,
@@ -476,7 +477,7 @@ namespace Business.Concrete
             }
         }
 
-       
+
 
         public IDataResult<int> GetAllCount()
         {
@@ -519,7 +520,7 @@ namespace Business.Concrete
 
         public IDataResult<List<OrderSimpleDto>> GetLastOrdersSimple()
         {
-            return new SuccessDataResult<List<OrderSimpleDto>>(_orderDal.GetAllDtoSimple(x => x.State == OrderStates.WAITINGCARDPAYMENT || x.State == OrderStates.UNAPPROVED).OrderByDescending(x=>x.OrderDate).Take(8).ToList());
+            return new SuccessDataResult<List<OrderSimpleDto>>(_orderDal.GetAllDtoSimple(x => x.State == OrderStates.WAITINGCARDPAYMENT || x.State == OrderStates.UNAPPROVED).OrderByDescending(x => x.OrderDate).Take(8).ToList());
         }
 
         public IDataResult<GraphPieDto> GetTopCategories(int count)
@@ -537,7 +538,7 @@ namespace Business.Concrete
             return new SuccessDataResult<RevenueAndProfitDto>(_orderDal.GetCostForMarket());
         }
 
-        public  IResult Update(OrderUpdateDto order)
+        public IResult Update(OrderUpdateDto order)
         {
             //  var existingOrder = _orderDal.Get(o => o.Id == order.OrderId);
             var existingOrder = _orderDal.GetOrderDetails(order.OrderId);
@@ -575,11 +576,11 @@ namespace Business.Concrete
                 {
                     var newContact = new OrderContactInfo()
                     {
-                        City =_cityDal.Get(x=>x.Id == address.CityId).Name,
+                        City = _cityDal.Get(x => x.Id == address.CityId).Name,
                         Header = address.Header,
                         Desc = address.Desc,
                         IsActive = address.IsActive,
-                        District = _districtDal.Get(x=>x.Id == address.DistrictId).Name,
+                        District = _districtDal.Get(x => x.Id == address.DistrictId).Name,
                         Latitude = address.Latitude,
                         Longitude = address.Longitude,
                         PostalCode = address.PostalCode,
@@ -588,25 +589,25 @@ namespace Business.Concrete
                         ApartmentNo = address.ApartmentNo,
                         DateCreated = DateTime.Now,
                         Floor = address.Floor,
-                        Neighborhood = _neighborhoodDal.Get(x=>x.Id == address.NeighborhoodId).Name,
+                        Neighborhood = _neighborhoodDal.Get(x => x.Id == address.NeighborhoodId).Name,
                         Phone = address.Phone,
                         DateModified = null,
                         AddressesId = address.Id,
                         UserId = address.UserId,
                     };
 
-                   // _orderContactInfoDal.Update(newContact);
-                   // order.OrderContactId = newContact.Id;
+                    // _orderContactInfoDal.Update(newContact);
+                    // order.OrderContactId = newContact.Id;
                     _orderDal.Update(newOrder);
 
                 }
             }
-            else 
+            else
             {
                 return new ErrorResult("güncellenemedi.");
             }
             return new SuccessResult();
-           
+
         }
 
         public IResult OrderComplateForPaytr(PaytrWebHookDto paytrWebHookDto)

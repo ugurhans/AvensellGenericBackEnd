@@ -36,7 +36,6 @@ namespace DataAccess.Concrate.EntityFramework
                                  Phone = a.Phone,
                                  Type = a.Type,
                                  UserId = a.UserId
-
                              };
                 return result.ToList();
             }

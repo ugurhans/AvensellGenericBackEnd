@@ -51,6 +51,14 @@ namespace Business.Concrete
             var address = _adressDal.Get(x => x.Id == id);
             if (address != null)
             {
+                if (address.IsActive == false)
+                {
+                    address.DateModified = DateTime.Now;
+                    address.IsActive = true;
+                    _adressDal.Update(address);
+                    return new SuccessResult("Adres Aktifleştirildi");
+
+                }
                 address.DateModified = DateTime.Now;
                 address.IsActive = false;
                 _adressDal.Update(address);

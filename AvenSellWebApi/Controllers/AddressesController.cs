@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AddressesController : ControllerBase
     {
-        IAddressService _addressesService;
+        private readonly IAddressService _addressesService;
         private readonly ICityService _cityService;
         private readonly IDistrictsService _districtsService;
         private readonly INeighborhoodService _neighborhoodService;

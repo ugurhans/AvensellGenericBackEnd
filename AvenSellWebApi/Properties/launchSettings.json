@@ -37,7 +37,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "KadimGrossAvenSellWebApi": {
+    "AvenSellWebApi": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:24450;http://localhost:24965",

@@ -6,7 +6,7 @@
 //using Microsoft.AspNetCore.Http.HttpResults;
 //using Microsoft.AspNetCore.Mvc;
 
-//namespace KadimGrossAvenSellWebApi.Controllers
+//namespace AvenSellWebApi.Controllers
 //{
 //    [Route("api/[controller]")]
 //    [ApiController]

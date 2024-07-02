@@ -16,12 +16,13 @@ namespace Entity.Concrate
         public string Header { get; set; }
         public string Type { get; set; }
         public string Desc { get; set; }
-        public int BuildingNo { get; set; }
-        public int Floor { get; set; }
+        public string BuildingNo { get; set; }
+        public string Floor { get; set; }
         public string ApartmentNo { get; set; }
         public string City { get; set; }
         public string District { get; set; }
         public string Neighborhood { get; set; }
+        public string Muhit { get; set; }
         public string Phone { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
@@ -31,7 +32,7 @@ namespace Entity.Concrate
         public bool? IsActive { get; set; }
         public int AddressesId { get; set; }
         public string FullAddress { get; set; }
-        
+
 
     }
 }

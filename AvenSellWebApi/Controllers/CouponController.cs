@@ -5,7 +5,7 @@ using Entity.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KadimGrossAvenSellWebApi.Controllers
+namespace AvenSellWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
