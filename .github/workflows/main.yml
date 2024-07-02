@@ -37,7 +37,7 @@ jobs:
         }
         
         Start-Sleep -s 15        
-        Copy-Item ${{env.DOTNET_ROOT}}/WebApi/* C:\inetpub\wwwroot\sites\avensellGeneric -Recurse -Force
+        Copy-Item ${{env.DOTNET_ROOT}}/AvensellWebApi/* C:\inetpub\wwwroot\sites\avensell\avensell-generic-back-end -Recurse -Force
         
         if ((Get-WebSiteState -Name avensell-generic-back-end).Value -eq "Stopped")
         {

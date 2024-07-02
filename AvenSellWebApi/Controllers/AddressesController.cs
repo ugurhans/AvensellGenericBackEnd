@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Entity.Concrete;
 
-namespace WebAPI.Controllers
+namespace AvenSellWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
